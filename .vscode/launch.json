@@ -1,0 +1,33 @@
+{
+    "version": "1.0.0",
+    "configurations": [
+        {
+            "name": "Launch Development",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_development.dart",
+            "args": ["--flavor","development" , "--target","lib/main_development.dart"],
+        },
+        {
+            "name": "Launch Production",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_production.dart",
+            "args": ["--flavor","production" , "--target","lib/main_production.dart"],
+        },
+        {
+            "name": "iOS Launch Development",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_development.dart",
+            "args": ["--flavor","development" , "--target","lib/main_development.dart", "--flavor", "dev"],
+        },
+        {
+            "name": "iOS Launch Production",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_production.dart",
+            "args": ["--flavor","production" , "--target","lib/main_production.dart", "--flavor", "prod"],
+        },
+    ]
+}

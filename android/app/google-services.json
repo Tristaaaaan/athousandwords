@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "806027140030",
+    "project_id": "a-thousand-words-376af",
+    "storage_bucket": "a-thousand-words-376af.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806027140030:android:6dc72aee9ab087447937ef",
+        "android_client_info": {
+          "package_name": "com.tristans.athousandwords"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFlpzJSdN8ggv-gY_EfEsP1OPlWO0rFoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
