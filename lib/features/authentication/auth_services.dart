@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../core/appmodels/user_model.dart';
+import '../../core/appmodels/users.dart';
 import '../notification/notification_services.dart';
 
 final authServicesProvider = Provider<AuthServices>((ref) {
@@ -46,14 +46,13 @@ class AuthServices {
         final UserCredential userCredential = await FirebaseAuth.instance
             .signInWithCredential(credential);
 
-        UserModel newUserData = UserModel(
+        UserData newUserData = UserData(
           uid: userCredential.user!.uid,
           email: userCredential.user!.email!,
-          fcmtoken: fcmtoken,
-          fullName: userCredential.user!.displayName!,
-          imageUrl: userCredential.user!.photoURL.toString(),
+          fcmToken: fcmtoken,
+          fullName: userCredential.user!.displayName ?? '',
+          imageUrl: userCredential.user!.photoURL,
         );
-
         final DocumentReference docRef = _firestore
             .collection('users')
             .doc(userCredential.user!.uid);

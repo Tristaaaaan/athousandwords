@@ -1,6 +1,6 @@
 import 'package:athousandwords/features/authentication/auth_gate.dart';
 import 'package:athousandwords/features/home/home.dart';
-import 'package:athousandwords/features/story/story.dart';
+import 'package:athousandwords/features/story/presentation/screen/story_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
