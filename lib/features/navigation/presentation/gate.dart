@@ -1,5 +1,5 @@
 import 'package:athousandwords/features/home/home.dart';
-import 'package:athousandwords/features/story/story.dart';
+import 'package:athousandwords/features/story/presentation/screen/story_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../commons/widgets/navbar/custom_navbar.dart';
