@@ -1,4 +1,4 @@
-import 'package:athousandwords/commons/textfields/regular_textfield.dart';
+import 'package:athousandwords/commons/widgets/textfields/regular_textfield.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {

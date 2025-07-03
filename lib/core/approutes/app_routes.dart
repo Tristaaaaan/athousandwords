@@ -1,3 +1,4 @@
+import 'package:athousandwords/features/authentication/auth_gate.dart';
 import 'package:athousandwords/features/home/home.dart';
 import 'package:athousandwords/features/story/story.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +11,7 @@ final GoRouter appRouter = GoRouter(
       path: '/',
 
       builder: (BuildContext context, GoRouterState state) {
-        return HomeScreen();
+        return AuthGate();
       },
     ),
     GoRoute(
