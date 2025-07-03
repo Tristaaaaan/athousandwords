@@ -45,8 +45,8 @@ app.*.map.json
 /android/app/release
 
 # Ignore environment config JSONs
-android/app/src/development/*.json
-android/app/src/production/*.json
+/android/app/src/development/*.json
+/android/app/src/production/*.json
 
 
 # lib Related
