@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../commons/widgets/buttons/loading_state_notifier.dart';
-import '../../commons/widgets/buttons/regular_button.dart';
 import '../../core/appmodels/story.dart';
 import '../story/data/story_impl.dart';
 
@@ -56,8 +55,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: TextButton(
-                  onPressed: () {
-                    // define your post action here
+                  onPressed: () async {
+                    final isLoading = ref.read(
+                      regularButtonLoadingProvider.notifier,
+                    );
+                    isLoading.setLoading("submitStory", true);
+
+                    try {
+                      final StoryData storyData = StoryData(
+                        userId: auth.currentUser!.uid,
+                        title: titleController.text,
+                        content: contentController.text,
+                        createdAt: Timestamp.now(),
+                        updatedAt: Timestamp.now(),
+                      );
+                      await ref
+                          .read(storyRepositoryProvider)
+                          .createStory(storyData);
+                    } catch (e) {
+                      developer.log("Error submitting review: $e");
+                    } finally {
+                      titleController.clear();
+                      contentController.clear();
+                      isLoading.setLoading("submitStory", false);
+                    }
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.primary,
@@ -103,39 +124,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 maxWords: 1500,
               ),
               const SizedBox(height: 24),
-              RegularButton(
-                onTap: () async {
-                  final isLoading = ref.read(
-                    regularButtonLoadingProvider.notifier,
-                  );
-                  isLoading.setLoading("submitStory", true);
-
-                  try {
-                    final StoryData storyData = StoryData(
-                      userId: auth.currentUser!.uid,
-                      title: titleController.text,
-                      content: contentController.text,
-                      createdAt: Timestamp.now(),
-                      updatedAt: Timestamp.now(),
-                    );
-                    await ref
-                        .read(storyRepositoryProvider)
-                        .createStory(storyData);
-                  } catch (e) {
-                    developer.log("Error submitting review: $e");
-                  } finally {
-                    titleController.clear();
-                    contentController.clear();
-                    isLoading.setLoading("submitStory", false);
-                  }
-                },
-                width: double.infinity,
-                withIcon: false,
-                text: "Submit Review",
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                textColor: Theme.of(context).colorScheme.surface,
-                buttonKey: "submitReview",
-              ),
             ]),
           ),
         ],
