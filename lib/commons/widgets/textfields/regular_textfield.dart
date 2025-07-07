@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 
 class StoryTextField extends StatefulWidget {
   final void Function(String) onChanged;
-  final int maxChars;
+  final int minWords;
+  final int maxWords;
   final double fontSize;
   final String hintText;
   final TextEditingController controller;
@@ -11,7 +12,8 @@ class StoryTextField extends StatefulWidget {
   const StoryTextField({
     super.key,
     required this.onChanged,
-    required this.maxChars,
+    required this.minWords,
+    required this.maxWords,
     required this.fontSize,
     required this.hintText,
     required this.controller,
@@ -22,32 +24,50 @@ class StoryTextField extends StatefulWidget {
 }
 
 class _StoryTextFieldState extends State<StoryTextField> {
-  late int remaining;
+  late int wordCount;
 
   @override
   void initState() {
     super.initState();
-    remaining = widget.maxChars - widget.controller.text.length;
-
-    widget.controller.addListener(_updateRemaining);
+    wordCount = _countWords(widget.controller.text);
+    widget.controller.addListener(_handleTextChange);
   }
 
-  void _updateRemaining() {
-    final text = widget.controller.text;
+  void _handleTextChange() {
+    final currentText = widget.controller.text;
+    final words = _splitWords(currentText);
+
+    if (words.length > widget.maxWords) {
+      final trimmed = words.take(widget.maxWords).join(' ');
+      widget.controller.value = TextEditingValue(
+        text: trimmed,
+        selection: TextSelection.collapsed(offset: trimmed.length),
+      );
+    }
+
     setState(() {
-      remaining = widget.maxChars - text.length;
+      wordCount = _countWords(widget.controller.text);
     });
-    widget.onChanged(text);
+
+    widget.onChanged(widget.controller.text);
   }
+
+  int _countWords(String text) => _splitWords(text).length;
+
+  List<String> _splitWords(String text) =>
+      text.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
 
   @override
   void dispose() {
-    widget.controller.removeListener(_updateRemaining);
+    widget.controller.removeListener(_handleTextChange);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isValid = wordCount >= widget.minWords;
+    final remaining = widget.maxWords - wordCount;
+
     return Stack(
       children: [
         Container(
@@ -57,15 +77,11 @@ class _StoryTextFieldState extends State<StoryTextField> {
           ),
           child: TextField(
             controller: widget.controller,
-            maxLength: widget.maxChars,
             maxLines: null,
             textAlignVertical: TextAlignVertical.top,
             cursorColor: Colors.black,
             style: TextStyle(fontSize: widget.fontSize),
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(widget.maxChars),
-              SpaceSanitizerFormatter(),
-            ],
+            inputFormatters: [SpaceSanitizerFormatter()],
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(
@@ -76,7 +92,7 @@ class _StoryTextFieldState extends State<StoryTextField> {
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
               ),
               counterText: '',
               contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 36),
@@ -87,8 +103,14 @@ class _StoryTextFieldState extends State<StoryTextField> {
           bottom: 8,
           right: 12,
           child: Text(
-            '$remaining/${widget.maxChars}',
-            style: const TextStyle(fontSize: 8, color: Colors.black54),
+            isValid
+                ? '$wordCount/${widget.maxWords} words'
+                : 'Minimum: ${widget.minWords}, current: $wordCount',
+            style: TextStyle(
+              fontSize: 10,
+              color: isValid ? Colors.black54 : Colors.red,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
@@ -102,7 +124,10 @@ class SpaceSanitizerFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    String newText = newValue.text.replaceAll(RegExp(r'\s+'), ' ');
+    // Replace 3 or more spaces with 2 spaces
+    final newText = newValue.text.replaceAll(RegExp(r' {3,}'), '  ');
+
+    // Adjust the cursor to match the new text length
     int offsetAdjustment = newText.length - newValue.text.length;
     int newOffset = (newValue.selection.end + offsetAdjustment).clamp(
       0,
