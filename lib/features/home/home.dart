@@ -40,54 +40,103 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home Screen')),
-      body: Column(
-        children: [
-          StoryTextField(
-            onChanged: (value) => print(value),
-            controller: titleController,
-            maxChars: 50,
-            fontSize: 40,
-            hintText: 'title',
-          ),
-          Container(
-            margin: const EdgeInsets.all(16),
-            child: StoryTextField(
-              controller: contentController,
-              hintText: 'tell your story',
-              fontSize: 18,
-              onChanged: (value) => print(value),
-              maxChars: 1500,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            snap: true,
+            pinned: true,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            elevation: 1,
+            title: const Text(
+              "Write your story",
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: TextButton(
+                  onPressed: () {
+                    // define your post action here
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  ),
+                  child: Row(
+                    children: const [
+                      Text(
+                        "Post",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      Icon(Icons.send, size: 18),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          RegularButton(
-            onTap: () async {
-              final isLoading = ref.read(regularButtonLoadingProvider.notifier);
-              isLoading.setLoading("submitStory", true);
 
-              try {
-                final StoryData storyData = StoryData(
-                  userId: auth.currentUser!.uid,
-                  title: titleController.text,
-                  content: contentController.text,
-                  createdAt: Timestamp.now(),
-                  updatedAt: Timestamp.now(),
-                );
-                await ref.read(storyRepositoryProvider).createStory(storyData);
-              } catch (e) {
-                developer.log("Error submitting review: $e");
-              } finally {
-                titleController.clear();
-                contentController.clear();
-                isLoading.setLoading("submitStory", false);
-              }
-            },
-            width: double.infinity,
-            withIcon: false,
-            text: "Submit Review",
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.surface,
-            buttonKey: "submitReview",
+          SliverList(
+            delegate: SliverChildListDelegate([
+              StoryTextField(
+                onChanged: (value) => print(value),
+                controller: titleController,
+                minWords: 1,
+                maxWords: 8,
+                fontSize: 40,
+                hintText: 'title',
+              ),
+              const SizedBox(height: 16),
+              StoryTextField(
+                controller: contentController,
+                hintText: 'tell your story',
+                fontSize: 18,
+                onChanged: (value) => print(value),
+                minWords: 1000,
+                maxWords: 1500,
+              ),
+              const SizedBox(height: 24),
+              RegularButton(
+                onTap: () async {
+                  final isLoading = ref.read(
+                    regularButtonLoadingProvider.notifier,
+                  );
+                  isLoading.setLoading("submitStory", true);
+
+                  try {
+                    final StoryData storyData = StoryData(
+                      userId: auth.currentUser!.uid,
+                      title: titleController.text,
+                      content: contentController.text,
+                      createdAt: Timestamp.now(),
+                      updatedAt: Timestamp.now(),
+                    );
+                    await ref
+                        .read(storyRepositoryProvider)
+                        .createStory(storyData);
+                  } catch (e) {
+                    developer.log("Error submitting review: $e");
+                  } finally {
+                    titleController.clear();
+                    contentController.clear();
+                    isLoading.setLoading("submitStory", false);
+                  }
+                },
+                width: double.infinity,
+                withIcon: false,
+                text: "Submit Review",
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                textColor: Theme.of(context).colorScheme.surface,
+                buttonKey: "submitReview",
+              ),
+            ]),
           ),
         ],
       ),
