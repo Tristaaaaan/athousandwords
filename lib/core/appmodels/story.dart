@@ -9,20 +9,24 @@ class StoryData with _$StoryData {
   const StoryData._();
 
   const factory StoryData({
-    required int reads,
-    required int bookmarks,
-    required int likes,
-    required List<String> readersId,
-    required List<String> bookmarksId,
-    required List<String> likesId,
-    required String userId,
-    required bool isPublish,
-    required bool isDeleted,
-    required String title,
+    @Default(0) int reads,
+    @Default(0) int bookmarks,
+    @Default(0) int likes,
+
+    @Default([]) List<String> readersId,
+    @Default([]) List<String> bookmarksId,
+    @Default([]) List<String> likesId,
+
+    @Default('') String userId,
+    @Default(false) bool isPublish,
+    @Default(false) bool isDeleted,
+    @Default('') String title,
+
     @TimestampConverter() required Timestamp createdAt,
     @TimestampConverter() required Timestamp updatedAt,
-    required String content,
-    required List<String> tags,
+
+    @Default('') String content,
+    @Default([]) List<String> tags,
   }) = _StoryData;
 
   factory StoryData.fromJson(Map<String, dynamic> json) =>

@@ -8,26 +8,33 @@ part of 'story.dart';
 
 _$StoryDataImpl _$$StoryDataImplFromJson(Map<String, dynamic> json) =>
     _$StoryDataImpl(
-      reads: (json['reads'] as num).toInt(),
-      bookmarks: (json['bookmarks'] as num).toInt(),
-      likes: (json['likes'] as num).toInt(),
-      readersId:
-          (json['readersId'] as List<dynamic>).map((e) => e as String).toList(),
-      bookmarksId: (json['bookmarksId'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      likesId:
-          (json['likesId'] as List<dynamic>).map((e) => e as String).toList(),
-      userId: json['userId'] as String,
-      isPublish: json['isPublish'] as bool,
-      isDeleted: json['isDeleted'] as bool,
-      title: json['title'] as String,
+      reads: (json['reads'] as num?)?.toInt() ?? 0,
+      bookmarks: (json['bookmarks'] as num?)?.toInt() ?? 0,
+      likes: (json['likes'] as num?)?.toInt() ?? 0,
+      readersId: (json['readersId'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      bookmarksId: (json['bookmarksId'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      likesId: (json['likesId'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      userId: json['userId'] as String? ?? '',
+      isPublish: json['isPublish'] as bool? ?? false,
+      isDeleted: json['isDeleted'] as bool? ?? false,
+      title: json['title'] as String? ?? '',
       createdAt:
           const TimestampConverter().fromJson(json['createdAt'] as Object),
       updatedAt:
           const TimestampConverter().fromJson(json['updatedAt'] as Object),
-      content: json['content'] as String,
-      tags: (json['tags'] as List<dynamic>).map((e) => e as String).toList(),
+      content: json['content'] as String? ?? '',
+      tags:
+          (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              const [],
     );
 
 Map<String, dynamic> _$$StoryDataImplToJson(_$StoryDataImpl instance) =>

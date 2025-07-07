@@ -6,6 +6,7 @@ class StoryTextField extends StatefulWidget {
   final int maxChars;
   final double fontSize;
   final String hintText;
+  final TextEditingController controller;
 
   const StoryTextField({
     super.key,
@@ -13,6 +14,7 @@ class StoryTextField extends StatefulWidget {
     required this.maxChars,
     required this.fontSize,
     required this.hintText,
+    required this.controller,
   });
 
   @override
@@ -20,26 +22,27 @@ class StoryTextField extends StatefulWidget {
 }
 
 class _StoryTextFieldState extends State<StoryTextField> {
-  late final TextEditingController _controller;
   late int remaining;
 
   @override
   void initState() {
     super.initState();
-    remaining = widget.maxChars;
-    _controller = TextEditingController()
-      ..addListener(() {
-        final text = _controller.text;
-        setState(() {
-          remaining = widget.maxChars - text.length;
-        });
-        widget.onChanged(text);
-      });
+    remaining = widget.maxChars - widget.controller.text.length;
+
+    widget.controller.addListener(_updateRemaining);
+  }
+
+  void _updateRemaining() {
+    final text = widget.controller.text;
+    setState(() {
+      remaining = widget.maxChars - text.length;
+    });
+    widget.onChanged(text);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.controller.removeListener(_updateRemaining);
     super.dispose();
   }
 
@@ -53,7 +56,7 @@ class _StoryTextFieldState extends State<StoryTextField> {
             border: const Border(bottom: BorderSide(color: Colors.grey)),
           ),
           child: TextField(
-            controller: _controller,
+            controller: widget.controller,
             maxLength: widget.maxChars,
             maxLines: null,
             textAlignVertical: TextAlignVertical.top,
@@ -76,7 +79,7 @@ class _StoryTextFieldState extends State<StoryTextField> {
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               counterText: '',
-              contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 36),
+              contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 36),
             ),
           ),
         ),
