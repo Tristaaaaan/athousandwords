@@ -278,20 +278,20 @@ class __$$StoryDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StoryDataImpl extends _StoryData {
   const _$StoryDataImpl(
-      {required this.reads,
-      required this.bookmarks,
-      required this.likes,
-      required final List<String> readersId,
-      required final List<String> bookmarksId,
-      required final List<String> likesId,
-      required this.userId,
-      required this.isPublish,
-      required this.isDeleted,
-      required this.title,
+      {this.reads = 0,
+      this.bookmarks = 0,
+      this.likes = 0,
+      final List<String> readersId = const [],
+      final List<String> bookmarksId = const [],
+      final List<String> likesId = const [],
+      this.userId = '',
+      this.isPublish = false,
+      this.isDeleted = false,
+      this.title = '',
       @TimestampConverter() required this.createdAt,
       @TimestampConverter() required this.updatedAt,
-      required this.content,
-      required final List<String> tags})
+      this.content = '',
+      final List<String> tags = const []})
       : _readersId = readersId,
         _bookmarksId = bookmarksId,
         _likesId = likesId,
@@ -302,13 +302,17 @@ class _$StoryDataImpl extends _StoryData {
       _$$StoryDataImplFromJson(json);
 
   @override
+  @JsonKey()
   final int reads;
   @override
+  @JsonKey()
   final int bookmarks;
   @override
+  @JsonKey()
   final int likes;
   final List<String> _readersId;
   @override
+  @JsonKey()
   List<String> get readersId {
     if (_readersId is EqualUnmodifiableListView) return _readersId;
     // ignore: implicit_dynamic_type
@@ -317,6 +321,7 @@ class _$StoryDataImpl extends _StoryData {
 
   final List<String> _bookmarksId;
   @override
+  @JsonKey()
   List<String> get bookmarksId {
     if (_bookmarksId is EqualUnmodifiableListView) return _bookmarksId;
     // ignore: implicit_dynamic_type
@@ -325,6 +330,7 @@ class _$StoryDataImpl extends _StoryData {
 
   final List<String> _likesId;
   @override
+  @JsonKey()
   List<String> get likesId {
     if (_likesId is EqualUnmodifiableListView) return _likesId;
     // ignore: implicit_dynamic_type
@@ -332,12 +338,16 @@ class _$StoryDataImpl extends _StoryData {
   }
 
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final bool isPublish;
   @override
+  @JsonKey()
   final bool isDeleted;
   @override
+  @JsonKey()
   final String title;
   @override
   @TimestampConverter()
@@ -346,9 +356,11 @@ class _$StoryDataImpl extends _StoryData {
   @TimestampConverter()
   final Timestamp updatedAt;
   @override
+  @JsonKey()
   final String content;
   final List<String> _tags;
   @override
+  @JsonKey()
   List<String> get tags {
     if (_tags is EqualUnmodifiableListView) return _tags;
     // ignore: implicit_dynamic_type
@@ -425,20 +437,20 @@ class _$StoryDataImpl extends _StoryData {
 
 abstract class _StoryData extends StoryData {
   const factory _StoryData(
-      {required final int reads,
-      required final int bookmarks,
-      required final int likes,
-      required final List<String> readersId,
-      required final List<String> bookmarksId,
-      required final List<String> likesId,
-      required final String userId,
-      required final bool isPublish,
-      required final bool isDeleted,
-      required final String title,
+      {final int reads,
+      final int bookmarks,
+      final int likes,
+      final List<String> readersId,
+      final List<String> bookmarksId,
+      final List<String> likesId,
+      final String userId,
+      final bool isPublish,
+      final bool isDeleted,
+      final String title,
       @TimestampConverter() required final Timestamp createdAt,
       @TimestampConverter() required final Timestamp updatedAt,
-      required final String content,
-      required final List<String> tags}) = _$StoryDataImpl;
+      final String content,
+      final List<String> tags}) = _$StoryDataImpl;
   const _StoryData._() : super._();
 
   factory _StoryData.fromJson(Map<String, dynamic> json) =
