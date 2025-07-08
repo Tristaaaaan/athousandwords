@@ -66,7 +66,6 @@ class _StoryTextFieldState extends State<StoryTextField> {
   @override
   Widget build(BuildContext context) {
     final isValid = wordCount >= widget.minWords;
-    final remaining = widget.maxWords - wordCount;
 
     return Stack(
       children: [

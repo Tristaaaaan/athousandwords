@@ -3,6 +3,8 @@ import 'package:athousandwords/features/story/presentation/screen/story_screen.d
 import 'package:flutter/material.dart';
 
 import '../../../commons/widgets/navbar/custom_navbar.dart';
+import '../../bookmarks/presentation/screen/bookmark_screen.dart';
+import '../../profile/presentation/screen/profile_screen.dart';
 
 class NavigationGate extends StatefulWidget {
   const NavigationGate({super.key});
@@ -15,7 +17,12 @@ class _NavigationGateState extends State<NavigationGate> {
   int _selectedIndex = 0;
   bool _isHolding = false;
 
-  final List<Widget> _screens = const [HomeScreen(), StoryScreen()];
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    StoryScreen(),
+    BookmarkScreen(),
+    ProfileScreen(),
+  ];
 
   void _onTabSelected(int index) {
     setState(() {
