@@ -1,3 +1,5 @@
+import 'package:athousandwords/features/story/presentation/widgets/story_content.dart';
+import 'package:athousandwords/features/story/presentation/widgets/story_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,24 +17,48 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   Widget build(BuildContext context) {
     final story = ref.watch(storyContentControllerProvider);
 
+    Future<void> refreshStory() async {
+      await ref.read(storyContentControllerProvider.notifier).refreshStory();
+    }
+
     return SafeArea(
       child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate([
-                story.when(
-                  initial: () => const CircularProgressIndicator(),
-                  loading: () => const CircularProgressIndicator(),
-                  loaded: (story) {
-                    return Text(story!.title);
-                  },
-                  error: (message) => Text(message),
-                  empty: () => const CircularProgressIndicator(),
+        body: RefreshIndicator(
+          onRefresh: refreshStory,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              story.when(
+                initial: () => SliverFillRemaining(
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
-              ]),
-            ),
-          ],
+                loading: () => SliverFillRemaining(
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                loaded: (story) {
+                  return SliverList(
+                    delegate: SliverChildListDelegate([
+                      StoryTitle(title: story?.title ?? "There is no title"),
+                      Divider(
+                        color: Colors.grey,
+                        thickness: .2,
+                        indent: 16,
+                        endIndent: 16,
+                      ),
+                      StoryContent(
+                        content: story?.content ?? "There is no content",
+                      ),
+                    ]),
+                  );
+                },
+                error: (message) =>
+                    SliverFillRemaining(child: Center(child: Text(message))),
+                empty: () => SliverFillRemaining(
+                  child: const Center(child: Text("No story available")),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
