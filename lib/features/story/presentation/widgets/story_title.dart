@@ -15,7 +15,7 @@ class StoryTitle extends StatelessWidget {
           fontFamily: 'Merriweather',
           fontSize: 42,
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );

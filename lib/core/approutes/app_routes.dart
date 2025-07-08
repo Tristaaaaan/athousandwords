@@ -17,9 +17,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/story',
       builder: (BuildContext context, GoRouterState state) {
-        return StoryScreen();
+        return StoryScreen(
+          onScrollDirectionChanged: (_) {}, // does nothing
+        );
       },
     ),
+
     GoRoute(
       path: '/home',
       builder: (BuildContext context, GoRouterState state) {

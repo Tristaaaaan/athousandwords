@@ -17,24 +17,24 @@ class _NavigationGateState extends State<NavigationGate> {
   int _selectedIndex = 0;
   bool _isHolding = false;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    StoryScreen(),
-    BookmarkScreen(),
-    ProfileScreen(),
-  ];
-
   void _onTabSelected(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  void _handleTouch(bool isDown) {
+  void _handleScrollDirection(bool isScrollingDown) {
     setState(() {
-      _isHolding = isDown;
+      _isHolding = isScrollingDown;
     });
   }
+
+  List<Widget> get _screens => [
+    const HomeScreen(),
+    StoryScreen(onScrollDirectionChanged: _handleScrollDirection),
+    const BookmarkScreen(),
+    const ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,16 +42,13 @@ class _NavigationGateState extends State<NavigationGate> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          GestureDetector(
-            onTapDown: (_) => _handleTouch(true),
-            onTapUp: (_) => _handleTouch(false),
-            onTapCancel: () => _handleTouch(false),
-            behavior: HitTestBehavior.translucent,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: _screens[_selectedIndex],
-            ),
+          // main screen
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: _screens[_selectedIndex],
           ),
+
+          // bottom nav bar
           Align(
             alignment: Alignment.bottomCenter,
             child: AnimatedOpacity(
