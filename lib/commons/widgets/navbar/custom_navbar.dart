@@ -44,14 +44,14 @@ class CustomBottomNavBar extends StatelessWidget {
                   context: context,
                 ),
                 _buildNavItem(
-                  icon: Icons.search_outlined,
-                  label: "Search",
+                  icon: Icons.read_more_outlined,
+                  label: "Read",
                   index: 1,
                   context: context,
                 ),
                 _buildNavItem(
-                  icon: Icons.favorite_border_outlined,
-                  label: "Favorites",
+                  icon: Icons.bookmark_added_outlined,
+                  label: "Bookmarks",
                   index: 2,
                   context: context,
                 ),
@@ -104,8 +104,10 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
             if (isSelected)
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
                 child: Text(
                   label,
                   style: TextStyle(
