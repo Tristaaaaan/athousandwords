@@ -25,39 +25,50 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       child: Scaffold(
         body: RefreshIndicator(
           onRefresh: refreshStory,
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              story.when(
-                initial: () => SliverFillRemaining(
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                loading: () => SliverFillRemaining(
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                loaded: (story) {
-                  return SliverList(
-                    delegate: SliverChildListDelegate([
-                      StoryTitle(title: story?.title ?? "There is no title"),
-                      Divider(
-                        color: Colors.grey,
-                        thickness: .2,
-                        indent: 16,
-                        endIndent: 16,
+          child: story.when(
+            initial: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            loaded: (story) {
+              return CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: 140,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: StoryTitle(
+                        title: story?.title ?? "There is no title",
                       ),
-                      StoryContent(
-                        content: story?.content ?? "There is no content",
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: refreshStory,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: refreshStory,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: refreshStory,
+                          ),
+                        ],
                       ),
-                    ]),
-                  );
-                },
-                error: (message) =>
-                    SliverFillRemaining(child: Center(child: Text(message))),
-                empty: () => SliverFillRemaining(
-                  child: const Center(child: Text("No story available")),
-                ),
-              ),
-            ],
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: StoryContent(
+                      content: story?.content ?? "There is no content",
+                    ),
+                  ),
+                ],
+              );
+            },
+            error: (message) => Center(child: Text(message)),
+            empty: () => const Center(child: Text("No story available")),
           ),
         ),
       ),
