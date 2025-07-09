@@ -100,44 +100,82 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                             children: [
                               IconButton(
                                 icon: const Icon(Icons.report_outlined),
+                                tooltip: "Report",
                                 onPressed: refreshStory,
                               ),
-                              Text("${story!.story.likes}"),
-                              IconButton(
-                                icon: story.isLiked
-                                    ? const Icon(Icons.favorite)
-                                    : const Icon(
-                                        Icons.favorite_outline_outlined,
-                                      ),
-                                onPressed: () {
-                                  ref
-                                      .read(
-                                        storyContentControllerProvider.notifier,
-                                      )
-                                      .toggleLike(
-                                        story.story.storyId!,
-                                        auth.currentUser!.uid,
-                                      );
-                                },
-                              ),
+                              const SizedBox(width: 12),
 
-                              Text("${story.story.bookmarks}"),
-                              IconButton(
-                                icon: Icon(
-                                  story.isBookmarked
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline_outlined,
-                                ),
-                                onPressed: () {
-                                  ref
-                                      .read(
-                                        storyContentControllerProvider.notifier,
-                                      )
-                                      .toggleBookmark(
-                                        story.story.storyId!,
-                                        auth.currentUser!.uid,
-                                      );
-                                },
+                              // Likes
+                              Row(
+                                children: [
+                                  Text(
+                                    "${story!.story.likes}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  IconButton(
+                                    icon: Icon(
+                                      story.isLiked
+                                          ? Icons.favorite
+                                          : Icons.favorite_outline_outlined,
+                                      color: story.isLiked
+                                          ? Colors.red
+                                          : Colors.grey[700],
+                                    ),
+                                    tooltip: story.isLiked ? "Unlike" : "Like",
+                                    onPressed: () {
+                                      ref
+                                          .read(
+                                            storyContentControllerProvider
+                                                .notifier,
+                                          )
+                                          .toggleLike(
+                                            story.story.storyId!,
+                                            auth.currentUser!.uid,
+                                          );
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 12),
+
+                              // Bookmarks
+                              Row(
+                                children: [
+                                  Text(
+                                    "${story.story.bookmarks}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  IconButton(
+                                    icon: Icon(
+                                      story.isBookmarked
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_outline_outlined,
+                                      color: story.isBookmarked
+                                          ? Colors.blueAccent
+                                          : Colors.grey[700],
+                                    ),
+                                    tooltip: story.isBookmarked
+                                        ? "Remove Bookmark"
+                                        : "Add Bookmark",
+                                    onPressed: () {
+                                      ref
+                                          .read(
+                                            storyContentControllerProvider
+                                                .notifier,
+                                          )
+                                          .toggleBookmark(
+                                            story.story.storyId!,
+                                            auth.currentUser!.uid,
+                                          );
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
