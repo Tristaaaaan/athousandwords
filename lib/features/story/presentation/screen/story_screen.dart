@@ -1,4 +1,5 @@
 import 'package:athousandwords/features/story/presentation/widgets/story_content.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +18,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   late final ScrollController _scrollController;
   double _lastOffset = 0;
   bool showAppBars = true;
-
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   void initState() {
     super.initState();
@@ -46,7 +47,6 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
   @override
   Widget build(BuildContext context) {
     final story = ref.watch(storyContentControllerProvider);
-
     Future<void> refreshStory() async {
       await ref.read(storyContentControllerProvider.notifier).refreshStory();
     }
@@ -112,7 +112,16 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                                 icon: const Icon(
                                   Icons.bookmark_outline_outlined,
                                 ),
-                                onPressed: refreshStory,
+                                onPressed: () {
+                                  // ref
+                                  //     .read(
+                                  //       storyContentControllerProvider.notifier,
+                                  //     )
+                                  //     .toggleBookmark(
+                                  //       story!.storyId!,
+                                  //       auth.currentUser!.uid,
+                                  //     );
+                                },
                               ),
                             ],
                           ),
