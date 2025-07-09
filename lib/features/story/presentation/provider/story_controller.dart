@@ -23,30 +23,23 @@ class StoryController extends StateNotifier<StoryState> {
     try {
       final storyData = await _storyRepository.getStory();
       final userId = FirebaseAuth.instance.currentUser!.uid;
+
       final isBookmarked = await _storyRepository.isBookmarked(
         storyData.storyId!,
         userId,
       );
+      final isLiked = await _storyRepository.isLiked(
+        storyData.storyId!,
+        userId,
+      ); // ✅
 
-      final storyInfo = StoryInfo(story: storyData, isBookmarked: isBookmarked);
+      final storyInfo = StoryInfo(
+        story: storyData,
+        isBookmarked: isBookmarked,
+        isLiked: isLiked,
+      );
 
       state = StoryState.loaded(story: storyInfo);
-    } catch (e) {
-      state = StoryState.error(e.toString());
-    }
-  }
-
-  Future<void> addBookmark(String storyId, String userId) async {
-    try {
-      await _storyRepository.addBookmark(storyId, userId);
-    } catch (e) {
-      state = StoryState.error(e.toString());
-    }
-  }
-
-  Future<void> removeBookmark(String storyId, String userId) async {
-    try {
-      await _storyRepository.removeBookmark(storyId, userId);
     } catch (e) {
       state = StoryState.error(e.toString());
     }
@@ -55,30 +48,59 @@ class StoryController extends StateNotifier<StoryState> {
   Future<void> toggleBookmark(String storyId, String userId) async {
     try {
       StoryInfo? currentInfo;
-
       state.maybeWhen(loaded: (info) => currentInfo = info, orElse: () {});
-
       if (currentInfo == null) return;
 
       final isBookmarked = currentInfo!.isBookmarked;
       final story = currentInfo!.story;
 
-      // Update Firestore
       if (isBookmarked) {
         await _storyRepository.removeBookmark(storyId, userId);
       } else {
         await _storyRepository.addBookmark(storyId, userId);
       }
 
-      final updatedBookmarkCount = isBookmarked
-          ? (story.bookmarks - 1).clamp(0, double.infinity).toInt()
-          : story.bookmarks + 1;
+      final updatedStory = story.copyWith(
+        bookmarks: isBookmarked
+            ? (story.bookmarks - 1).clamp(0, double.infinity).toInt()
+            : story.bookmarks + 1,
+      );
 
-      final updatedStory = story.copyWith(bookmarks: updatedBookmarkCount);
-
-      final updatedInfo = StoryInfo(
+      final updatedInfo = currentInfo!.copyWith(
         story: updatedStory,
         isBookmarked: !isBookmarked,
+      );
+
+      state = StoryState.loaded(story: updatedInfo);
+    } catch (e) {
+      state = StoryState.error(e.toString());
+    }
+  }
+
+  Future<void> toggleLike(String storyId, String userId) async {
+    try {
+      StoryInfo? currentInfo;
+      state.maybeWhen(loaded: (info) => currentInfo = info, orElse: () {});
+      if (currentInfo == null) return;
+
+      final isLiked = currentInfo!.isLiked;
+      final story = currentInfo!.story;
+
+      if (isLiked) {
+        await _storyRepository.removeLike(storyId, userId);
+      } else {
+        await _storyRepository.addLike(storyId, userId);
+      }
+
+      final updatedStory = story.copyWith(
+        likes: isLiked
+            ? (story.likes - 1).clamp(0, double.infinity).toInt()
+            : story.likes + 1,
+      );
+
+      final updatedInfo = currentInfo!.copyWith(
+        story: updatedStory,
+        isLiked: !isLiked,
       );
 
       state = StoryState.loaded(story: updatedInfo);

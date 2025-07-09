@@ -16,8 +16,6 @@ class StoryData with _$StoryData {
     @Default(0) int likes,
 
     @Default([]) List<String> readersId,
-    @Default([]) List<String> bookmarksId,
-    @Default([]) List<String> likesId,
 
     @Default('') String userId,
     @Default(false) bool isPublish,
