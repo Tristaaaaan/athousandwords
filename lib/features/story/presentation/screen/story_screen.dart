@@ -16,6 +16,7 @@ class StoryScreen extends ConsumerStatefulWidget {
 class _StoryScreenState extends ConsumerState<StoryScreen> {
   late final ScrollController _scrollController;
   double _lastOffset = 0;
+  bool showAppBars = true;
 
   @override
   void initState() {
@@ -24,10 +25,12 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
       ..addListener(() {
         final currentOffset = _scrollController.offset;
 
-        if (currentOffset > _lastOffset + 10) {
-          widget.onScrollDirectionChanged(true); // scrolling down
-        } else if (currentOffset < _lastOffset - 10) {
-          widget.onScrollDirectionChanged(false); // scrolling up
+        if (currentOffset > _lastOffset + 10 && showAppBars) {
+          setState(() => showAppBars = false); // hide top bars
+          widget.onScrollDirectionChanged(true); // optional: notify parent
+        } else if (currentOffset < _lastOffset - 10 && !showAppBars) {
+          setState(() => showAppBars = true); // show top bars
+          widget.onScrollDirectionChanged(false); // optional: notify parent
         }
 
         _lastOffset = currentOffset;
@@ -59,61 +62,63 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
               return CustomScrollView(
                 controller: _scrollController,
                 slivers: [
-                  SliverAppBar(
-                    pinned: true,
-                    expandedHeight: 100,
-                    backgroundColor: Colors.white,
-                    surfaceTintColor: Colors.white, // optional for Material 3
-                    elevation: 0,
-                    flexibleSpace: FlexibleSpaceBar(
-                      titlePadding: const EdgeInsetsDirectional.only(
-                        start: 16,
-                        bottom: 16,
-                      ),
-                      centerTitle: false,
-                      title: Text(
-                        story?.title ?? "There is no title",
-                        style: const TextStyle(
-                          fontFamily: 'Merriweather',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                  if (showAppBars)
+                    SliverAppBar(
+                      pinned: true,
+                      expandedHeight: 100,
+                      surfaceTintColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      elevation: 0,
+                      flexibleSpace: FlexibleSpaceBar(
+                        titlePadding: const EdgeInsetsDirectional.only(
+                          start: 16,
+                          bottom: 16,
+                        ),
+                        centerTitle: false,
+                        title: Text(
+                          story?.title ?? "There is no title",
+                          style: const TextStyle(
+                            fontFamily: 'Merriweather',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                      collapseMode: CollapseMode.parallax, // optional
-                      background:
-                          Container(), // empty or add a background image
                     ),
-                  ),
-                  SliverAppBar(
-                    pinned: true,
-                    backgroundColor: Colors.white,
-                    surfaceTintColor: Colors.white, // optional for Material 3
-                    elevation: 0,
-                    title: Row(
-                      children: [
-                        const Expanded(child: Divider(thickness: 1)),
-                        const SizedBox(width: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.report_outlined),
-                              onPressed: refreshStory,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.favorite_outline_outlined),
-                              onPressed: refreshStory,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.bookmark_outline_outlined),
-                              onPressed: refreshStory,
-                            ),
-                          ],
-                        ),
-                      ],
+                  if (showAppBars)
+                    SliverAppBar(
+                      pinned: true,
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      elevation: 0,
+                      title: Row(
+                        children: [
+                          const Expanded(child: Divider(thickness: 1)),
+                          const SizedBox(width: 10),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.report_outlined),
+                                onPressed: refreshStory,
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.favorite_outline_outlined,
+                                ),
+                                onPressed: refreshStory,
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.bookmark_outline_outlined,
+                                ),
+                                onPressed: refreshStory,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                   SliverToBoxAdapter(
                     child: StoryContent(
                       content: story?.content ?? "There is no content",
