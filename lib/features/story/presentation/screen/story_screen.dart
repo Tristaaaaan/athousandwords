@@ -102,14 +102,26 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                                 icon: const Icon(Icons.report_outlined),
                                 onPressed: refreshStory,
                               ),
+                              Text("${story!.story.likes}"),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.favorite_outline_outlined,
-                                ),
-                                onPressed: refreshStory,
+                                icon: story.isLiked
+                                    ? const Icon(Icons.favorite)
+                                    : const Icon(
+                                        Icons.favorite_outline_outlined,
+                                      ),
+                                onPressed: () {
+                                  ref
+                                      .read(
+                                        storyContentControllerProvider.notifier,
+                                      )
+                                      .toggleLike(
+                                        story.story.storyId!,
+                                        auth.currentUser!.uid,
+                                      );
+                                },
                               ),
 
-                              Text("${story!.story.bookmarks}"),
+                              Text("${story.story.bookmarks}"),
                               IconButton(
                                 icon: Icon(
                                   story.isBookmarked

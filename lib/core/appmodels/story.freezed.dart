@@ -26,8 +26,6 @@ mixin _$StoryData {
   int get bookmarks => throw _privateConstructorUsedError;
   int get likes => throw _privateConstructorUsedError;
   List<String> get readersId => throw _privateConstructorUsedError;
-  List<String> get bookmarksId => throw _privateConstructorUsedError;
-  List<String> get likesId => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
   bool get isPublish => throw _privateConstructorUsedError;
   bool get isDeleted => throw _privateConstructorUsedError;
@@ -60,8 +58,6 @@ abstract class $StoryDataCopyWith<$Res> {
       int bookmarks,
       int likes,
       List<String> readersId,
-      List<String> bookmarksId,
-      List<String> likesId,
       String userId,
       bool isPublish,
       bool isDeleted,
@@ -92,8 +88,6 @@ class _$StoryDataCopyWithImpl<$Res, $Val extends StoryData>
     Object? bookmarks = null,
     Object? likes = null,
     Object? readersId = null,
-    Object? bookmarksId = null,
-    Object? likesId = null,
     Object? userId = null,
     Object? isPublish = null,
     Object? isDeleted = null,
@@ -123,14 +117,6 @@ class _$StoryDataCopyWithImpl<$Res, $Val extends StoryData>
       readersId: null == readersId
           ? _value.readersId
           : readersId // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      bookmarksId: null == bookmarksId
-          ? _value.bookmarksId
-          : bookmarksId // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      likesId: null == likesId
-          ? _value.likesId
-          : likesId // ignore: cast_nullable_to_non_nullable
               as List<String>,
       userId: null == userId
           ? _value.userId
@@ -182,8 +168,6 @@ abstract class _$$StoryDataImplCopyWith<$Res>
       int bookmarks,
       int likes,
       List<String> readersId,
-      List<String> bookmarksId,
-      List<String> likesId,
       String userId,
       bool isPublish,
       bool isDeleted,
@@ -212,8 +196,6 @@ class __$$StoryDataImplCopyWithImpl<$Res>
     Object? bookmarks = null,
     Object? likes = null,
     Object? readersId = null,
-    Object? bookmarksId = null,
-    Object? likesId = null,
     Object? userId = null,
     Object? isPublish = null,
     Object? isDeleted = null,
@@ -243,14 +225,6 @@ class __$$StoryDataImplCopyWithImpl<$Res>
       readersId: null == readersId
           ? _value._readersId
           : readersId // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      bookmarksId: null == bookmarksId
-          ? _value._bookmarksId
-          : bookmarksId // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      likesId: null == likesId
-          ? _value._likesId
-          : likesId // ignore: cast_nullable_to_non_nullable
               as List<String>,
       userId: null == userId
           ? _value.userId
@@ -297,8 +271,6 @@ class _$StoryDataImpl extends _StoryData {
       this.bookmarks = 0,
       this.likes = 0,
       final List<String> readersId = const [],
-      final List<String> bookmarksId = const [],
-      final List<String> likesId = const [],
       this.userId = '',
       this.isPublish = false,
       this.isDeleted = false,
@@ -308,8 +280,6 @@ class _$StoryDataImpl extends _StoryData {
       this.content = '',
       final List<String> tags = const []})
       : _readersId = readersId,
-        _bookmarksId = bookmarksId,
-        _likesId = likesId,
         _tags = tags,
         super._();
 
@@ -335,24 +305,6 @@ class _$StoryDataImpl extends _StoryData {
     if (_readersId is EqualUnmodifiableListView) return _readersId;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_readersId);
-  }
-
-  final List<String> _bookmarksId;
-  @override
-  @JsonKey()
-  List<String> get bookmarksId {
-    if (_bookmarksId is EqualUnmodifiableListView) return _bookmarksId;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_bookmarksId);
-  }
-
-  final List<String> _likesId;
-  @override
-  @JsonKey()
-  List<String> get likesId {
-    if (_likesId is EqualUnmodifiableListView) return _likesId;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_likesId);
   }
 
   @override
@@ -387,7 +339,7 @@ class _$StoryDataImpl extends _StoryData {
 
   @override
   String toString() {
-    return 'StoryData(storyId: $storyId, reads: $reads, bookmarks: $bookmarks, likes: $likes, readersId: $readersId, bookmarksId: $bookmarksId, likesId: $likesId, userId: $userId, isPublish: $isPublish, isDeleted: $isDeleted, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, content: $content, tags: $tags)';
+    return 'StoryData(storyId: $storyId, reads: $reads, bookmarks: $bookmarks, likes: $likes, readersId: $readersId, userId: $userId, isPublish: $isPublish, isDeleted: $isDeleted, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, content: $content, tags: $tags)';
   }
 
   @override
@@ -402,9 +354,6 @@ class _$StoryDataImpl extends _StoryData {
             (identical(other.likes, likes) || other.likes == likes) &&
             const DeepCollectionEquality()
                 .equals(other._readersId, _readersId) &&
-            const DeepCollectionEquality()
-                .equals(other._bookmarksId, _bookmarksId) &&
-            const DeepCollectionEquality().equals(other._likesId, _likesId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.isPublish, isPublish) ||
                 other.isPublish == isPublish) &&
@@ -428,8 +377,6 @@ class _$StoryDataImpl extends _StoryData {
       bookmarks,
       likes,
       const DeepCollectionEquality().hash(_readersId),
-      const DeepCollectionEquality().hash(_bookmarksId),
-      const DeepCollectionEquality().hash(_likesId),
       userId,
       isPublish,
       isDeleted,
@@ -462,8 +409,6 @@ abstract class _StoryData extends StoryData {
       final int bookmarks,
       final int likes,
       final List<String> readersId,
-      final List<String> bookmarksId,
-      final List<String> likesId,
       final String userId,
       final bool isPublish,
       final bool isDeleted,
@@ -487,10 +432,6 @@ abstract class _StoryData extends StoryData {
   int get likes;
   @override
   List<String> get readersId;
-  @override
-  List<String> get bookmarksId;
-  @override
-  List<String> get likesId;
   @override
   String get userId;
   @override

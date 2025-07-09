@@ -16,14 +16,6 @@ _$StoryDataImpl _$$StoryDataImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      bookmarksId: (json['bookmarksId'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      likesId: (json['likesId'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
       userId: json['userId'] as String? ?? '',
       isPublish: json['isPublish'] as bool? ?? false,
       isDeleted: json['isDeleted'] as bool? ?? false,
@@ -45,8 +37,6 @@ Map<String, dynamic> _$$StoryDataImplToJson(_$StoryDataImpl instance) =>
       'bookmarks': instance.bookmarks,
       'likes': instance.likes,
       'readersId': instance.readersId,
-      'bookmarksId': instance.bookmarksId,
-      'likesId': instance.likesId,
       'userId': instance.userId,
       'isPublish': instance.isPublish,
       'isDeleted': instance.isDeleted,
