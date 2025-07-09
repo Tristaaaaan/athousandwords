@@ -29,16 +29,19 @@ class StoryRepositoryImpl extends StoryRepository {
   }
 
   @override
-  Stream<StoryData> getStoryStream() {
-    return _firestore.collection("stories").snapshots().map((snapshot) {
-      if (snapshot.docs.isEmpty) {
-        throw Exception("No stories found");
-      }
-
-      final doc = snapshot.docs.first;
-      final data = StoryData.fromJson(doc.data());
-      return data.copyWith(storyId: doc.id);
-    });
+  Future<StoryData> getStory() async {
+    try {
+      final snapshot = await _firestore.collection("stories").get();
+      return StoryData.fromJson(snapshot.docs.first.data());
+    } catch (e, st) {
+      developer.log(
+        'Error getting story',
+        name: 'StoryRepositoryImpl',
+        error: e,
+        stackTrace: st,
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -78,6 +81,17 @@ class StoryRepositoryImpl extends StoryRepository {
         transaction.update(storyRef, {"bookmarks": FieldValue.increment(-1)});
       }
     });
+  }
+
+  @override
+  Future<bool> isBookmarked(String storyId, String userId) async {
+    final userBookmarkRef = _firestore
+        .collection("users")
+        .doc(userId)
+        .collection("bookmarks")
+        .doc(storyId);
+    final userBookmarkSnap = await userBookmarkRef.get();
+    return userBookmarkSnap.exists;
   }
 }
 

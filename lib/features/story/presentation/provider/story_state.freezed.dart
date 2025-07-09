@@ -20,7 +20,7 @@ mixin _$StoryState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(StoryData? story) loaded,
+    required TResult Function(StoryInfo? story) loaded,
     required TResult Function(String message) error,
     required TResult Function() empty,
   }) =>
@@ -29,7 +29,7 @@ mixin _$StoryState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(StoryData? story)? loaded,
+    TResult? Function(StoryInfo? story)? loaded,
     TResult? Function(String message)? error,
     TResult? Function()? empty,
   }) =>
@@ -38,7 +38,7 @@ mixin _$StoryState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(StoryData? story)? loaded,
+    TResult Function(StoryInfo? story)? loaded,
     TResult Function(String message)? error,
     TResult Function()? empty,
     required TResult orElse(),
@@ -138,7 +138,7 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(StoryData? story) loaded,
+    required TResult Function(StoryInfo? story) loaded,
     required TResult Function(String message) error,
     required TResult Function() empty,
   }) {
@@ -150,7 +150,7 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(StoryData? story)? loaded,
+    TResult? Function(StoryInfo? story)? loaded,
     TResult? Function(String message)? error,
     TResult? Function()? empty,
   }) {
@@ -162,7 +162,7 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(StoryData? story)? loaded,
+    TResult Function(StoryInfo? story)? loaded,
     TResult Function(String message)? error,
     TResult Function()? empty,
     required TResult orElse(),
@@ -261,7 +261,7 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(StoryData? story) loaded,
+    required TResult Function(StoryInfo? story) loaded,
     required TResult Function(String message) error,
     required TResult Function() empty,
   }) {
@@ -273,7 +273,7 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(StoryData? story)? loaded,
+    TResult? Function(StoryInfo? story)? loaded,
     TResult? Function(String message)? error,
     TResult? Function()? empty,
   }) {
@@ -285,7 +285,7 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(StoryData? story)? loaded,
+    TResult Function(StoryInfo? story)? loaded,
     TResult Function(String message)? error,
     TResult Function()? empty,
     required TResult orElse(),
@@ -347,9 +347,7 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({StoryData? story});
-
-  $StoryDataCopyWith<$Res>? get story;
+  $Res call({StoryInfo? story});
 }
 
 /// @nodoc
@@ -371,22 +369,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
       story: freezed == story
           ? _value.story
           : story // ignore: cast_nullable_to_non_nullable
-              as StoryData?,
+              as StoryInfo?,
     ));
-  }
-
-  /// Create a copy of StoryState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $StoryDataCopyWith<$Res>? get story {
-    if (_value.story == null) {
-      return null;
-    }
-
-    return $StoryDataCopyWith<$Res>(_value.story!, (value) {
-      return _then(_value.copyWith(story: value));
-    });
   }
 }
 
@@ -396,7 +380,7 @@ class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl({this.story});
 
   @override
-  final StoryData? story;
+  final StoryInfo? story;
 
   @override
   String toString() {
@@ -427,7 +411,7 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(StoryData? story) loaded,
+    required TResult Function(StoryInfo? story) loaded,
     required TResult Function(String message) error,
     required TResult Function() empty,
   }) {
@@ -439,7 +423,7 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(StoryData? story)? loaded,
+    TResult? Function(StoryInfo? story)? loaded,
     TResult? Function(String message)? error,
     TResult? Function()? empty,
   }) {
@@ -451,7 +435,7 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(StoryData? story)? loaded,
+    TResult Function(StoryInfo? story)? loaded,
     TResult Function(String message)? error,
     TResult Function()? empty,
     required TResult orElse(),
@@ -504,9 +488,9 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements StoryState {
-  const factory _Loaded({final StoryData? story}) = _$LoadedImpl;
+  const factory _Loaded({final StoryInfo? story}) = _$LoadedImpl;
 
-  StoryData? get story;
+  StoryInfo? get story;
 
   /// Create a copy of StoryState
   /// with the given fields replaced by the non-null parameter values.
@@ -585,7 +569,7 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(StoryData? story) loaded,
+    required TResult Function(StoryInfo? story) loaded,
     required TResult Function(String message) error,
     required TResult Function() empty,
   }) {
@@ -597,7 +581,7 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(StoryData? story)? loaded,
+    TResult? Function(StoryInfo? story)? loaded,
     TResult? Function(String message)? error,
     TResult? Function()? empty,
   }) {
@@ -609,7 +593,7 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(StoryData? story)? loaded,
+    TResult Function(StoryInfo? story)? loaded,
     TResult Function(String message)? error,
     TResult Function()? empty,
     required TResult orElse(),
@@ -716,7 +700,7 @@ class _$EmptyImpl implements _Empty {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(StoryData? story) loaded,
+    required TResult Function(StoryInfo? story) loaded,
     required TResult Function(String message) error,
     required TResult Function() empty,
   }) {
@@ -728,7 +712,7 @@ class _$EmptyImpl implements _Empty {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(StoryData? story)? loaded,
+    TResult? Function(StoryInfo? story)? loaded,
     TResult? Function(String message)? error,
     TResult? Function()? empty,
   }) {
@@ -740,7 +724,7 @@ class _$EmptyImpl implements _Empty {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(StoryData? story)? loaded,
+    TResult Function(StoryInfo? story)? loaded,
     TResult Function(String message)? error,
     TResult Function()? empty,
     required TResult orElse(),

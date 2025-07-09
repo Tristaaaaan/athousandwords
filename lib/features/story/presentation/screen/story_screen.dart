@@ -76,7 +76,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                         ),
                         centerTitle: false,
                         title: Text(
-                          story?.title ?? "There is no title",
+                          story?.story.title ?? "There is no title",
                           style: const TextStyle(
                             fontFamily: 'Merriweather',
                             fontSize: 24,
@@ -108,19 +108,23 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                                 ),
                                 onPressed: refreshStory,
                               ),
+
+                              Text("${story!.story.bookmarks}"),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.bookmark_outline_outlined,
+                                icon: Icon(
+                                  story.isBookmarked
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_outline_outlined,
                                 ),
                                 onPressed: () {
-                                  // ref
-                                  //     .read(
-                                  //       storyContentControllerProvider.notifier,
-                                  //     )
-                                  //     .toggleBookmark(
-                                  //       story!.storyId!,
-                                  //       auth.currentUser!.uid,
-                                  //     );
+                                  ref
+                                      .read(
+                                        storyContentControllerProvider.notifier,
+                                      )
+                                      .toggleBookmark(
+                                        story.story.storyId!,
+                                        auth.currentUser!.uid,
+                                      );
                                 },
                               ),
                             ],
@@ -130,7 +134,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                     ),
                   SliverToBoxAdapter(
                     child: StoryContent(
-                      content: story?.content ?? "There is no content",
+                      content: story?.story.content ?? "There is no content",
                     ),
                   ),
                 ],

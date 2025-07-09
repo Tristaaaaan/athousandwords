@@ -1,10 +1,8 @@
-import 'dart:async';
-
 import 'package:athousandwords/features/story/domain/story_repo.dart';
 import 'package:athousandwords/features/story/presentation/provider/story_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/appmodels/story.dart';
 import '../../data/story_impl.dart';
 
 final storyContentControllerProvider =
@@ -14,24 +12,28 @@ final storyContentControllerProvider =
 
 class StoryController extends StateNotifier<StoryState> {
   final StoryRepository _storyRepository;
-  StreamSubscription<StoryData>? _storySubscription;
 
   StoryController(this._storyRepository) : super(const StoryState.initial()) {
-    _listenToStory(); // Stream the first story automatically
+    getStory();
   }
 
-  void _listenToStory() {
+  Future<void> getStory() async {
     state = const StoryState.loading();
 
-    _storySubscription?.cancel();
-    _storySubscription = _storyRepository.getStoryStream().listen(
-      (story) {
-        state = StoryState.loaded(story: story);
-      },
-      onError: (e) {
-        state = StoryState.error(e.toString());
-      },
-    );
+    try {
+      final storyData = await _storyRepository.getStory();
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final isBookmarked = await _storyRepository.isBookmarked(
+        storyData.storyId!,
+        userId,
+      );
+
+      final storyInfo = StoryInfo(story: storyData, isBookmarked: isBookmarked);
+
+      state = StoryState.loaded(story: storyInfo);
+    } catch (e) {
+      state = StoryState.error(e.toString());
+    }
   }
 
   Future<void> addBookmark(String storyId, String userId) async {
@@ -50,36 +52,42 @@ class StoryController extends StateNotifier<StoryState> {
     }
   }
 
-  // Future<void> toggleBookmark(String userId) async {
-  //   final currentState = state;
-  //   if (currentState is! _Loaded) return;
+  Future<void> toggleBookmark(String storyId, String userId) async {
+    try {
+      StoryInfo? currentInfo;
 
-  //   final story = currentState.story;
-  //   final storyId = story.storyId;
+      state.maybeWhen(loaded: (info) => currentInfo = info, orElse: () {});
 
-  //   if (storyId == null) {
-  //     state = const StoryState.error("Missing story ID");
-  //     return;
-  //   }
+      if (currentInfo == null) return;
 
-  //   try {
-  //     if (story.bookmarksId.contains(userId)) {
-  //       await _storyRepository.removeBookmark(storyId, userId);
-  //     } else {
-  //       await _storyRepository.addBookmark(storyId, userId);
-  //     }
-  //   } catch (e) {
-  //     state = StoryState.error(e.toString());
-  //   }
-  // }
+      final isBookmarked = currentInfo!.isBookmarked;
+      final story = currentInfo!.story;
 
-  Future<void> refreshStory() async {
-    _listenToStory(); // Simply restart the stream
+      // Update Firestore
+      if (isBookmarked) {
+        await _storyRepository.removeBookmark(storyId, userId);
+      } else {
+        await _storyRepository.addBookmark(storyId, userId);
+      }
+
+      final updatedBookmarkCount = isBookmarked
+          ? (story.bookmarks - 1).clamp(0, double.infinity).toInt()
+          : story.bookmarks + 1;
+
+      final updatedStory = story.copyWith(bookmarks: updatedBookmarkCount);
+
+      final updatedInfo = StoryInfo(
+        story: updatedStory,
+        isBookmarked: !isBookmarked,
+      );
+
+      state = StoryState.loaded(story: updatedInfo);
+    } catch (e) {
+      state = StoryState.error(e.toString());
+    }
   }
 
-  @override
-  void dispose() {
-    _storySubscription?.cancel();
-    super.dispose();
+  Future<void> refreshStory() async {
+    await getStory();
   }
 }
