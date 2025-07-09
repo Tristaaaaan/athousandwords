@@ -20,6 +20,8 @@ StoryData _$StoryDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StoryData {
+  String? get storyId =>
+      throw _privateConstructorUsedError; // 🔁 Renamed from id to storyId
   int get reads => throw _privateConstructorUsedError;
   int get bookmarks => throw _privateConstructorUsedError;
   int get likes => throw _privateConstructorUsedError;
@@ -53,7 +55,8 @@ abstract class $StoryDataCopyWith<$Res> {
       _$StoryDataCopyWithImpl<$Res, StoryData>;
   @useResult
   $Res call(
-      {int reads,
+      {String? storyId,
+      int reads,
       int bookmarks,
       int likes,
       List<String> readersId,
@@ -84,6 +87,7 @@ class _$StoryDataCopyWithImpl<$Res, $Val extends StoryData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? storyId = freezed,
     Object? reads = null,
     Object? bookmarks = null,
     Object? likes = null,
@@ -100,6 +104,10 @@ class _$StoryDataCopyWithImpl<$Res, $Val extends StoryData>
     Object? tags = null,
   }) {
     return _then(_value.copyWith(
+      storyId: freezed == storyId
+          ? _value.storyId
+          : storyId // ignore: cast_nullable_to_non_nullable
+              as String?,
       reads: null == reads
           ? _value.reads
           : reads // ignore: cast_nullable_to_non_nullable
@@ -169,7 +177,8 @@ abstract class _$$StoryDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int reads,
+      {String? storyId,
+      int reads,
       int bookmarks,
       int likes,
       List<String> readersId,
@@ -198,6 +207,7 @@ class __$$StoryDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? storyId = freezed,
     Object? reads = null,
     Object? bookmarks = null,
     Object? likes = null,
@@ -214,6 +224,10 @@ class __$$StoryDataImplCopyWithImpl<$Res>
     Object? tags = null,
   }) {
     return _then(_$StoryDataImpl(
+      storyId: freezed == storyId
+          ? _value.storyId
+          : storyId // ignore: cast_nullable_to_non_nullable
+              as String?,
       reads: null == reads
           ? _value.reads
           : reads // ignore: cast_nullable_to_non_nullable
@@ -278,7 +292,8 @@ class __$$StoryDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StoryDataImpl extends _StoryData {
   const _$StoryDataImpl(
-      {this.reads = 0,
+      {this.storyId,
+      this.reads = 0,
       this.bookmarks = 0,
       this.likes = 0,
       final List<String> readersId = const [],
@@ -301,6 +316,9 @@ class _$StoryDataImpl extends _StoryData {
   factory _$StoryDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoryDataImplFromJson(json);
 
+  @override
+  final String? storyId;
+// 🔁 Renamed from id to storyId
   @override
   @JsonKey()
   final int reads;
@@ -369,7 +387,7 @@ class _$StoryDataImpl extends _StoryData {
 
   @override
   String toString() {
-    return 'StoryData(reads: $reads, bookmarks: $bookmarks, likes: $likes, readersId: $readersId, bookmarksId: $bookmarksId, likesId: $likesId, userId: $userId, isPublish: $isPublish, isDeleted: $isDeleted, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, content: $content, tags: $tags)';
+    return 'StoryData(storyId: $storyId, reads: $reads, bookmarks: $bookmarks, likes: $likes, readersId: $readersId, bookmarksId: $bookmarksId, likesId: $likesId, userId: $userId, isPublish: $isPublish, isDeleted: $isDeleted, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, content: $content, tags: $tags)';
   }
 
   @override
@@ -377,6 +395,7 @@ class _$StoryDataImpl extends _StoryData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$StoryDataImpl &&
+            (identical(other.storyId, storyId) || other.storyId == storyId) &&
             (identical(other.reads, reads) || other.reads == reads) &&
             (identical(other.bookmarks, bookmarks) ||
                 other.bookmarks == bookmarks) &&
@@ -404,6 +423,7 @@ class _$StoryDataImpl extends _StoryData {
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      storyId,
       reads,
       bookmarks,
       likes,
@@ -437,7 +457,8 @@ class _$StoryDataImpl extends _StoryData {
 
 abstract class _StoryData extends StoryData {
   const factory _StoryData(
-      {final int reads,
+      {final String? storyId,
+      final int reads,
       final int bookmarks,
       final int likes,
       final List<String> readersId,
@@ -456,6 +477,8 @@ abstract class _StoryData extends StoryData {
   factory _StoryData.fromJson(Map<String, dynamic> json) =
       _$StoryDataImpl.fromJson;
 
+  @override
+  String? get storyId; // 🔁 Renamed from id to storyId
   @override
   int get reads;
   @override

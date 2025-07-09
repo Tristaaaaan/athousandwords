@@ -9,6 +9,8 @@ class StoryData with _$StoryData {
   const StoryData._();
 
   const factory StoryData({
+    String? storyId, // 🔁 Renamed from id to storyId
+
     @Default(0) int reads,
     @Default(0) int bookmarks,
     @Default(0) int likes,

@@ -8,6 +8,7 @@ part of 'story.dart';
 
 _$StoryDataImpl _$$StoryDataImplFromJson(Map<String, dynamic> json) =>
     _$StoryDataImpl(
+      storyId: json['storyId'] as String?,
       reads: (json['reads'] as num?)?.toInt() ?? 0,
       bookmarks: (json['bookmarks'] as num?)?.toInt() ?? 0,
       likes: (json['likes'] as num?)?.toInt() ?? 0,
@@ -39,6 +40,7 @@ _$StoryDataImpl _$$StoryDataImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$StoryDataImplToJson(_$StoryDataImpl instance) =>
     <String, dynamic>{
+      'storyId': instance.storyId,
       'reads': instance.reads,
       'bookmarks': instance.bookmarks,
       'likes': instance.likes,
