@@ -13,6 +13,7 @@ class UserData with _$UserData {
     required String email,
     String? fcmToken,
     String? imageUrl,
+    String? storyId,
   }) = _UserData;
 
   factory UserData.fromJson(Map<String, dynamic> json) =>
