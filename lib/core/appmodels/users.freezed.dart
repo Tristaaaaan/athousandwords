@@ -25,6 +25,7 @@ mixin _$UserData {
   String get email => throw _privateConstructorUsedError;
   String? get fcmToken => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  String? get storyId => throw _privateConstructorUsedError;
 
   /// Serializes this UserData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,7 +47,8 @@ abstract class $UserDataCopyWith<$Res> {
       String fullName,
       String email,
       String? fcmToken,
-      String? imageUrl});
+      String? imageUrl,
+      String? storyId});
 }
 
 /// @nodoc
@@ -69,6 +71,7 @@ class _$UserDataCopyWithImpl<$Res, $Val extends UserData>
     Object? email = null,
     Object? fcmToken = freezed,
     Object? imageUrl = freezed,
+    Object? storyId = freezed,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
@@ -91,6 +94,10 @@ class _$UserDataCopyWithImpl<$Res, $Val extends UserData>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      storyId: freezed == storyId
+          ? _value.storyId
+          : storyId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -108,7 +115,8 @@ abstract class _$$UserDataImplCopyWith<$Res>
       String fullName,
       String email,
       String? fcmToken,
-      String? imageUrl});
+      String? imageUrl,
+      String? storyId});
 }
 
 /// @nodoc
@@ -129,6 +137,7 @@ class __$$UserDataImplCopyWithImpl<$Res>
     Object? email = null,
     Object? fcmToken = freezed,
     Object? imageUrl = freezed,
+    Object? storyId = freezed,
   }) {
     return _then(_$UserDataImpl(
       uid: null == uid
@@ -151,6 +160,10 @@ class __$$UserDataImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      storyId: freezed == storyId
+          ? _value.storyId
+          : storyId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -163,7 +176,8 @@ class _$UserDataImpl extends _UserData {
       required this.fullName,
       required this.email,
       this.fcmToken,
-      this.imageUrl})
+      this.imageUrl,
+      this.storyId})
       : super._();
 
   factory _$UserDataImpl.fromJson(Map<String, dynamic> json) =>
@@ -179,10 +193,12 @@ class _$UserDataImpl extends _UserData {
   final String? fcmToken;
   @override
   final String? imageUrl;
+  @override
+  final String? storyId;
 
   @override
   String toString() {
-    return 'UserData(uid: $uid, fullName: $fullName, email: $email, fcmToken: $fcmToken, imageUrl: $imageUrl)';
+    return 'UserData(uid: $uid, fullName: $fullName, email: $email, fcmToken: $fcmToken, imageUrl: $imageUrl, storyId: $storyId)';
   }
 
   @override
@@ -197,13 +213,14 @@ class _$UserDataImpl extends _UserData {
             (identical(other.fcmToken, fcmToken) ||
                 other.fcmToken == fcmToken) &&
             (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+                other.imageUrl == imageUrl) &&
+            (identical(other.storyId, storyId) || other.storyId == storyId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, uid, fullName, email, fcmToken, imageUrl);
+  int get hashCode => Object.hash(
+      runtimeType, uid, fullName, email, fcmToken, imageUrl, storyId);
 
   /// Create a copy of UserData
   /// with the given fields replaced by the non-null parameter values.
@@ -227,7 +244,8 @@ abstract class _UserData extends UserData {
       required final String fullName,
       required final String email,
       final String? fcmToken,
-      final String? imageUrl}) = _$UserDataImpl;
+      final String? imageUrl,
+      final String? storyId}) = _$UserDataImpl;
   const _UserData._() : super._();
 
   factory _UserData.fromJson(Map<String, dynamic> json) =
@@ -243,6 +261,8 @@ abstract class _UserData extends UserData {
   String? get fcmToken;
   @override
   String? get imageUrl;
+  @override
+  String? get storyId;
 
   /// Create a copy of UserData
   /// with the given fields replaced by the non-null parameter values.
