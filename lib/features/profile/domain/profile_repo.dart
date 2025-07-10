@@ -7,7 +7,7 @@ abstract class ProfileRepository {
 
 class ProfileData {
   final UserData user;
-  final StoryData story;
+  final StoryData? story;
 
   ProfileData({required this.user, required this.story});
 }
