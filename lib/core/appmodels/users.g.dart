@@ -13,6 +13,7 @@ _$UserDataImpl _$$UserDataImplFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       fcmToken: json['fcmToken'] as String?,
       imageUrl: json['imageUrl'] as String?,
+      storyId: json['storyId'] as String?,
     );
 
 Map<String, dynamic> _$$UserDataImplToJson(_$UserDataImpl instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$$UserDataImplToJson(_$UserDataImpl instance) =>
       'email': instance.email,
       'fcmToken': instance.fcmToken,
       'imageUrl': instance.imageUrl,
+      'storyId': instance.storyId,
     };

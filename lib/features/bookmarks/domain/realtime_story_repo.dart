@@ -11,8 +11,6 @@ class RealTimeStoryBookMarkRepository {
   DocumentSnapshot<BookmarkData>? lastBookmarkDoc;
   bool hasNextStories = true;
 
-  final List<BookmarkData> _bookmarkedStories = [];
-
   late final CollectionReference<BookmarkData> _firestoreUserBookmarks =
       FirebaseFirestore.instance
           .collection('users')
