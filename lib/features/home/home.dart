@@ -107,7 +107,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SliverList(
             delegate: SliverChildListDelegate([
               StoryTextField(
-                onChanged: (value) => print(value),
+                onChanged: (value) {
+                  setState(() {});
+                },
                 controller: titleController,
                 minWords: 1,
                 maxWords: 8,
@@ -119,7 +121,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 controller: contentController,
                 hintText: 'tell your story',
                 fontSize: 18,
-                onChanged: (value) => print(value),
+                onChanged: (value) => setState(() {}),
                 minWords: 1000,
                 maxWords: 1500,
               ),
