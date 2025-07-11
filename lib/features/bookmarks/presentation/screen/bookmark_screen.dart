@@ -1,7 +1,10 @@
+import 'package:athousandwords/commons/widgets/snackbar/information_snackbar.dart';
 import 'package:athousandwords/features/bookmarks/presentation/providers/story_providers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../story/presentation/provider/story_controller.dart';
 
 class BookmarkScreen extends ConsumerWidget {
   const BookmarkScreen({super.key});
@@ -10,6 +13,7 @@ class BookmarkScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final state = ref.watch(realtimeBookmarkStoryStateProvider(uid));
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Bookmarks')),
@@ -24,14 +28,31 @@ class BookmarkScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   if (index < state.bookmarks.length) {
                     final bookmark = state.bookmarks[index];
-                    return Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Bookmarked at: ${bookmark.bookmarkedAt}'),
-                          Text('Story ID: ${bookmark.storyId ?? "No ID"}'),
-                        ],
+                    return InkWell(
+                      onTap: () async {
+                        await ref
+                            .read(storyContentControllerProvider.notifier)
+                            .toggleBookmark(
+                              bookmark.storyId,
+                              auth.currentUser!.uid,
+                            );
+                        if (context.mounted) {
+                          informationSnackBar(
+                            context,
+                            Icons.info,
+                            "Bookmark removed",
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Bookmarked at: ${bookmark.bookmarkedAt}'),
+                            Text('Story ID: ${bookmark.storyId}'),
+                          ],
+                        ),
                       ),
                     );
                   } else {

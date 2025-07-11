@@ -30,18 +30,12 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
   void _setupRealtimeListener() {
     _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
       (snapshot) {
-        final newBookmarks = snapshot.docs.map((doc) => doc.data()).toList();
+        // Always rebuild full list from snapshot to detect additions, updates, and deletions
+        final updatedList = snapshot.docs.map((doc) => doc.data()).toList();
 
-        for (final bookmark in newBookmarks) {
-          final index = bookmarks.indexWhere(
-            (b) => b.storyId == bookmark.storyId,
-          );
-          if (index == -1) {
-            bookmarks.add(bookmark);
-          } else {
-            bookmarks[index] = bookmark;
-          }
-        }
+        bookmarks
+          ..clear()
+          ..addAll(updatedList);
 
         // Sort by bookmarkedAt descending (newest first)
         bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
@@ -60,9 +54,6 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
-    final fetchedStories = await _storyRepo.fetchBookmarks(limitTo);
-    // Note: bookmarks list holds BookmarkData, fetchedStories returns StoryData,
-    // So only update hasNextStories here, keep bookmarks list as is (managed by stream)
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
@@ -77,7 +68,6 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
-    final fetchedStories = await _storyRepo.fetchBookmarks(limitTo);
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
