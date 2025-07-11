@@ -32,6 +32,7 @@ class RealTimeStoryBookMarkRepository {
 
   RealTimeStoryBookMarkRepository({required this.userId});
 
+  // Stream of bookmark docs ordered by bookmarkedAt
   Stream<QuerySnapshot<BookmarkData>> get bookmarksStream {
     return _firestoreUserBookmarks
         .orderBy('bookmarkedAt', descending: true)

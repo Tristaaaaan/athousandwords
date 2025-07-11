@@ -30,12 +30,64 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
   void _setupRealtimeListener() {
     _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
       (snapshot) {
-        // Always rebuild full list from snapshot to detect additions, updates, and deletions
-        final updatedList = snapshot.docs.map((doc) => doc.data()).toList();
+        final newBookmarks = snapshot.docs.map((doc) => doc.data()).toList();
 
-        bookmarks
-          ..clear()
-          ..addAll(updatedList);
+        // Create a set of current story IDs for comparison
+        final currentBookmarkIds = bookmarks.map((b) => b.storyId).toSet();
+        final newBookmarkIds = newBookmarks.map((b) => b.storyId).toSet();
+
+        // Remove bookmarks that are no longer in the new snapshot
+        bookmarks.removeWhere(
+          (bookmark) => !newBookmarkIds.contains(bookmark.storyId),
+        );
+
+        // Add or update remaining bookmarks
+        for (final bookmark in newBookmarks) {
+          final index = bookmarks.indexWhere(
+            (b) => b.storyId == bookmark.storyId,
+          );
+          if (index == -1) {
+            bookmarks.add(bookmark);
+          } else {
+            bookmarks[index] = bookmark;
+          }
+        }
+
+        // Sort by bookmarkedAt descending (newest first)
+        bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
+
+        notifyListeners();
+      },
+      onError: (error) {
+        debugPrint('Error in bookmarks stream: $error');
+      },
+    );
+  }
+
+  // Alternative version using DocumentChanges for more efficient updates
+  void _setupRealtimeListenerAlternative() {
+    _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
+      (snapshot) {
+        for (final change in snapshot.docChanges) {
+          switch (change.type) {
+            case DocumentChangeType.added:
+              bookmarks.add(change.doc.data()!);
+              break;
+            case DocumentChangeType.modified:
+              final index = bookmarks.indexWhere(
+                (b) => b.storyId == change.doc.data()!.storyId,
+              );
+              if (index != -1) {
+                bookmarks[index] = change.doc.data()!;
+              }
+              break;
+            case DocumentChangeType.removed:
+              bookmarks.removeWhere(
+                (b) => b.storyId == change.doc.data()!.storyId,
+              );
+              break;
+          }
+        }
 
         // Sort by bookmarkedAt descending (newest first)
         bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
@@ -54,6 +106,7 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
+    final fetchedStories = await _storyRepo.fetchBookmarks(limitTo);
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
@@ -68,6 +121,7 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
+    final fetchedStories = await _storyRepo.fetchBookmarks(limitTo);
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
