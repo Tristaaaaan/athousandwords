@@ -52,7 +52,7 @@ class BookmarkScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                       splashColor: Theme.of(
                         context,
-                      ).primaryColor.withOpacity(0.1),
+                      ).primaryColor.withValues(alpha: .1),
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         margin: const EdgeInsets.symmetric(
@@ -68,7 +68,7 @@ class BookmarkScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.15),
+                              color: Colors.grey.withValues(alpha: .15),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -87,7 +87,7 @@ class BookmarkScreen extends ConsumerWidget {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    story.title ?? 'Untitled Story',
+                                    story.title,
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
@@ -134,7 +134,7 @@ class BookmarkScreen extends ConsumerWidget {
                                   children: [
                                     _StatIconText(
                                       icon: Icons.favorite,
-                                      value: story.likes ?? 0,
+                                      value: story.likes,
                                       color: Colors.redAccent,
                                       label: 'Likes',
                                     ),
