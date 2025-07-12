@@ -13,7 +13,7 @@ class BookmarkScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final state = ref.watch(realtimeBookmarkStoryStateProvider(uid));
-    final FirebaseAuth auth = FirebaseAuth.instance;
+    final auth = FirebaseAuth.instance;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Bookmarks')),
@@ -24,10 +24,14 @@ class BookmarkScreen extends ConsumerWidget {
               child: ListView.builder(
                 controller: state.homeScrollController,
                 itemCount:
-                    state.bookmarks.length + (state.hasNextStories ? 1 : 0),
+                    state.bookmarkWithStories.length +
+                    (state.hasNextStories ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index < state.bookmarks.length) {
-                    final bookmark = state.bookmarks[index];
+                  if (index < state.bookmarkWithStories.length) {
+                    final bws = state.bookmarkWithStories[index];
+                    final bookmark = bws.bookmark;
+                    final story = bws.story;
+
                     return InkWell(
                       onTap: () async {
                         await ref
@@ -46,17 +50,32 @@ class BookmarkScreen extends ConsumerWidget {
                       },
                       child: Container(
                         padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Bookmarked at: ${bookmark.bookmarkedAt}'),
-                            Text('Story ID: ${bookmark.storyId}'),
+                            Text(
+                              'Story Title: ${story.title}',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Bookmarked At: ${bookmark.bookmarkedAt}',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.grey),
+                            ),
                           ],
                         ),
                       ),
                     );
                   } else {
-                    // Loading indicator for pagination
                     return const Padding(
                       padding: EdgeInsets.all(16),
                       child: Center(child: CircularProgressIndicator()),

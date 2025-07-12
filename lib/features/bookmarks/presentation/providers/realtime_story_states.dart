@@ -5,13 +5,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../../core/appmodels/story.dart';
 import '../../domain/realtime_story_repo.dart';
+
+class BookmarkWithStory {
+  final BookmarkData bookmark;
+  final StoryData story;
+
+  BookmarkWithStory({required this.bookmark, required this.story});
+}
 
 class RealTimeBookmarkStoryState extends ChangeNotifier {
   final RealTimeStoryBookMarkRepository _storyRepo;
   late final ScrollController homeScrollController;
 
-  List<BookmarkData> bookmarks = [];
+  List<BookmarkWithStory> bookmarkWithStories = [];
+  Set<String> loadedStoryIds = {};
+
   bool isFetchingStories = false;
   bool hasNextStories = true;
   bool hideFAB = false;
@@ -29,31 +39,32 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
 
   void _setupRealtimeListener() {
     _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
-      (snapshot) {
+      (snapshot) async {
         final newBookmarks = snapshot.docs.map((doc) => doc.data()).toList();
+        final storyIds = newBookmarks.map((b) => b.storyId).toSet();
 
-        // Create a set of current story IDs for comparison
-        final newBookmarkIds = newBookmarks.map((b) => b.storyId).toSet();
+        final storyFutures = storyIds.map((id) => _storyRepo.doc(id).get());
+        final storySnapshots = await Future.wait(storyFutures);
 
-        // Remove bookmarks that are no longer in the new snapshot
-        bookmarks.removeWhere(
-          (bookmark) => !newBookmarkIds.contains(bookmark.storyId),
-        );
+        final updatedPairs = <BookmarkWithStory>[];
 
-        // Add or update remaining bookmarks
-        for (final bookmark in newBookmarks) {
-          final index = bookmarks.indexWhere(
-            (b) => b.storyId == bookmark.storyId,
-          );
-          if (index == -1) {
-            bookmarks.add(bookmark);
-          } else {
-            bookmarks[index] = bookmark;
+        for (int i = 0; i < newBookmarks.length; i++) {
+          final storySnap = storySnapshots.elementAt(i);
+          if (storySnap.exists) {
+            final story = storySnap.data()!;
+            updatedPairs.add(
+              BookmarkWithStory(bookmark: newBookmarks[i], story: story),
+            );
           }
         }
 
-        // Sort by bookmarkedAt descending (newest first)
-        bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
+        bookmarkWithStories
+          ..clear()
+          ..addAll(updatedPairs);
+
+        loadedStoryIds
+          ..clear()
+          ..addAll(updatedPairs.map((e) => e.bookmark.storyId));
 
         notifyListeners();
       },
@@ -63,49 +74,15 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     );
   }
 
-  // // Alternative version using DocumentChanges for more efficient updates
-  // void _setupRealtimeListenerAlternative() {
-  //   _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
-  //     (snapshot) {
-  //       for (final change in snapshot.docChanges) {
-  //         switch (change.type) {
-  //           case DocumentChangeType.added:
-  //             bookmarks.add(change.doc.data()!);
-  //             break;
-  //           case DocumentChangeType.modified:
-  //             final index = bookmarks.indexWhere(
-  //               (b) => b.storyId == change.doc.data()!.storyId,
-  //             );
-  //             if (index != -1) {
-  //               bookmarks[index] = change.doc.data()!;
-  //             }
-  //             break;
-  //           case DocumentChangeType.removed:
-  //             bookmarks.removeWhere(
-  //               (b) => b.storyId == change.doc.data()!.storyId,
-  //             );
-  //             break;
-  //         }
-  //       }
-
-  //       // Sort by bookmarkedAt descending (newest first)
-  //       bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
-
-  //       notifyListeners();
-  //     },
-  //     onError: (error) {
-  //       debugPrint('Error in bookmarks stream: $error');
-  //     },
-  //   );
-  // }
-
   Future<void> _loadInitialBookmarks() async {
     if (_loading) return;
     _loading = true;
     isFetchingStories = true;
     notifyListeners();
 
-    await _storyRepo.fetchBookmarks(limitTo);
+    final newPairs = await _storyRepo.fetchBookmarks(limitTo, loadedStoryIds);
+    bookmarkWithStories.addAll(newPairs);
+    loadedStoryIds.addAll(newPairs.map((e) => e.bookmark.storyId));
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
@@ -120,6 +97,9 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
+    final newPairs = await _storyRepo.fetchBookmarks(limitTo, loadedStoryIds);
+    bookmarkWithStories.addAll(newPairs);
+    loadedStoryIds.addAll(newPairs.map((e) => e.bookmark.storyId));
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
