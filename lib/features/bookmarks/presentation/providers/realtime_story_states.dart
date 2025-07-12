@@ -33,7 +33,6 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
         final newBookmarks = snapshot.docs.map((doc) => doc.data()).toList();
 
         // Create a set of current story IDs for comparison
-        final currentBookmarkIds = bookmarks.map((b) => b.storyId).toSet();
         final newBookmarkIds = newBookmarks.map((b) => b.storyId).toSet();
 
         // Remove bookmarks that are no longer in the new snapshot
@@ -64,41 +63,41 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     );
   }
 
-  // Alternative version using DocumentChanges for more efficient updates
-  void _setupRealtimeListenerAlternative() {
-    _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
-      (snapshot) {
-        for (final change in snapshot.docChanges) {
-          switch (change.type) {
-            case DocumentChangeType.added:
-              bookmarks.add(change.doc.data()!);
-              break;
-            case DocumentChangeType.modified:
-              final index = bookmarks.indexWhere(
-                (b) => b.storyId == change.doc.data()!.storyId,
-              );
-              if (index != -1) {
-                bookmarks[index] = change.doc.data()!;
-              }
-              break;
-            case DocumentChangeType.removed:
-              bookmarks.removeWhere(
-                (b) => b.storyId == change.doc.data()!.storyId,
-              );
-              break;
-          }
-        }
+  // // Alternative version using DocumentChanges for more efficient updates
+  // void _setupRealtimeListenerAlternative() {
+  //   _bookmarksSubscription = _storyRepo.bookmarksStream.listen(
+  //     (snapshot) {
+  //       for (final change in snapshot.docChanges) {
+  //         switch (change.type) {
+  //           case DocumentChangeType.added:
+  //             bookmarks.add(change.doc.data()!);
+  //             break;
+  //           case DocumentChangeType.modified:
+  //             final index = bookmarks.indexWhere(
+  //               (b) => b.storyId == change.doc.data()!.storyId,
+  //             );
+  //             if (index != -1) {
+  //               bookmarks[index] = change.doc.data()!;
+  //             }
+  //             break;
+  //           case DocumentChangeType.removed:
+  //             bookmarks.removeWhere(
+  //               (b) => b.storyId == change.doc.data()!.storyId,
+  //             );
+  //             break;
+  //         }
+  //       }
 
-        // Sort by bookmarkedAt descending (newest first)
-        bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
+  //       // Sort by bookmarkedAt descending (newest first)
+  //       bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
 
-        notifyListeners();
-      },
-      onError: (error) {
-        debugPrint('Error in bookmarks stream: $error');
-      },
-    );
-  }
+  //       notifyListeners();
+  //     },
+  //     onError: (error) {
+  //       debugPrint('Error in bookmarks stream: $error');
+  //     },
+  //   );
+  // }
 
   Future<void> _loadInitialBookmarks() async {
     if (_loading) return;
@@ -106,7 +105,7 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
-    final fetchedStories = await _storyRepo.fetchBookmarks(limitTo);
+    await _storyRepo.fetchBookmarks(limitTo);
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
@@ -121,7 +120,6 @@ class RealTimeBookmarkStoryState extends ChangeNotifier {
     isFetchingStories = true;
     notifyListeners();
 
-    final fetchedStories = await _storyRepo.fetchBookmarks(limitTo);
     hasNextStories = _storyRepo.hasNextStories;
 
     isFetchingStories = false;
