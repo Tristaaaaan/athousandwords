@@ -4,7 +4,14 @@ import 'package:athousandwords/core/appmodels/bookmark.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/appmodels/story.dart';
-import '../presentation/providers/realtime_story_states.dart';
+
+// Create a combined model to hold both bookmark and story data
+class BookmarkWithStory {
+  final BookmarkData bookmark;
+  final StoryData story;
+
+  BookmarkWithStory({required this.bookmark, required this.story});
+}
 
 class RealTimeStoryBookMarkRepository {
   final String userId;
@@ -33,16 +40,15 @@ class RealTimeStoryBookMarkRepository {
 
   RealTimeStoryBookMarkRepository({required this.userId});
 
+  // Stream of bookmark docs ordered by bookmarkedAt
   Stream<QuerySnapshot<BookmarkData>> get bookmarksStream {
     return _firestoreUserBookmarks
         .orderBy('bookmarkedAt', descending: true)
         .snapshots();
   }
 
-  Future<List<BookmarkWithStory>> fetchBookmarks([
-    int limitTo = 20,
-    Set<String>? excludeIds,
-  ]) async {
+  // Returns list of BookmarkWithStory objects
+  Future<List<BookmarkWithStory>> fetchBookmarks([int limitTo = 20]) async {
     try {
       Query<BookmarkData> query = _firestoreUserBookmarks
           .orderBy('bookmarkedAt', descending: true)
@@ -57,33 +63,25 @@ class RealTimeStoryBookMarkRepository {
       if (snapshot.docs.isNotEmpty) {
         lastBookmarkDoc = snapshot.docs.last;
 
-        final newBookmarks = snapshot.docs
-            .map((doc) => doc.data())
-            .where((b) => !(excludeIds?.contains(b.storyId) ?? false))
-            .toList();
+        final bookmarkWithStoryList = <BookmarkWithStory>[];
 
-        final storyFutures = newBookmarks.map(
-          (b) => _storiesCollection.doc(b.storyId).get(),
-        );
-        final storySnapshots = await Future.wait(storyFutures);
+        // Fetch story documents for each bookmark
+        for (final bookmarkDoc in snapshot.docs) {
+          final bookmark = bookmarkDoc.data();
+          final storyDoc = await _storiesCollection.doc(bookmark.storyId).get();
+
+          if (storyDoc.exists) {
+            bookmarkWithStoryList.add(
+              BookmarkWithStory(bookmark: bookmark, story: storyDoc.data()!),
+            );
+          }
+        }
 
         if (snapshot.docs.length < limitTo) {
           hasNextStories = false;
         }
 
-        final bookmarkWithStories = <BookmarkWithStory>[];
-        for (int i = 0; i < newBookmarks.length; i++) {
-          if (storySnapshots[i].exists) {
-            bookmarkWithStories.add(
-              BookmarkWithStory(
-                bookmark: newBookmarks[i],
-                story: storySnapshots[i].data()!,
-              ),
-            );
-          }
-        }
-
-        return bookmarkWithStories;
+        return bookmarkWithStoryList;
       } else {
         hasNextStories = false;
       }
@@ -94,7 +92,29 @@ class RealTimeStoryBookMarkRepository {
     return [];
   }
 
+  // Helper method to fetch story data for a single bookmark
+  Future<BookmarkWithStory?> fetchStoryForBookmark(
+    BookmarkData bookmark,
+  ) async {
+    try {
+      final storyDoc = await _storiesCollection.doc(bookmark.storyId).get();
+
+      if (storyDoc.exists) {
+        return BookmarkWithStory(bookmark: bookmark, story: storyDoc.data()!);
+      }
+    } catch (e) {
+      developer.log('Error fetching story for bookmark: $e');
+    }
+    return null;
+  }
+
+  // Helper to get story document reference by storyId
   DocumentReference<StoryData> doc(String storyId) {
     return _storiesCollection.doc(storyId);
+  }
+
+  // Get real-time story updates for a specific story
+  Stream<DocumentSnapshot<StoryData>> getStoryStream(String storyId) {
+    return _storiesCollection.doc(storyId).snapshots();
   }
 }
