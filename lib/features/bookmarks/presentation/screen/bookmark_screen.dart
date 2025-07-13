@@ -157,18 +157,6 @@ class BookmarkScreen extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: state.hideFAB
-          ? null
-          : FloatingActionButton(
-              onPressed: () {
-                state.homeScrollController.animateTo(
-                  0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: const Icon(Icons.arrow_upward),
-            ),
     );
   }
 }
