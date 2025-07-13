@@ -17,21 +17,24 @@ class StoryController extends StateNotifier<StoryState> {
     getStory();
   }
 
-  Future<void> getStory() async {
+  Future<void> getStory({String storyId = ""}) async {
     state = const StoryState.loading();
 
     try {
-      final storyData = await _storyRepository.getStory();
+      final storyData = await _storyRepository.getStory(
+        storyId: storyId,
+      ); // ✅ pass storyId
       final userId = FirebaseAuth.instance.currentUser!.uid;
 
       final isBookmarked = await _storyRepository.isBookmarked(
         storyData.storyId!,
         userId,
       );
+
       final isLiked = await _storyRepository.isLiked(
         storyData.storyId!,
         userId,
-      ); // ✅
+      );
 
       final storyInfo = StoryInfo(
         story: storyData,
@@ -107,6 +110,10 @@ class StoryController extends StateNotifier<StoryState> {
     } catch (e) {
       state = StoryState.error(e.toString());
     }
+  }
+
+  Future<void> loadNextStory(String previousStoryId) async {
+    await getStory(storyId: previousStoryId);
   }
 
   Future<void> refreshStory() async {
