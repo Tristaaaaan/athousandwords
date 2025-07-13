@@ -1,4 +1,4 @@
-import 'package:athousandwords/features/report/domain/model/report.dart';
+import 'package:athousandwords/core/appmodels/report.dart';
 import 'package:athousandwords/features/story/presentation/widgets/story_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

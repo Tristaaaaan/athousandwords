@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../core/appmodels/bookmark.dart';
+import 'bookmark.dart';
 
 part 'report.freezed.dart';
 part 'report.g.dart';

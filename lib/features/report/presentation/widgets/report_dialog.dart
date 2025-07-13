@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/appmodels/report.dart';
 import '../../data/report_repo_impl.dart';
-import '../../domain/model/report.dart';
 
 void showReportDialog({
   required BuildContext context,
@@ -27,7 +27,8 @@ void showReportDialog({
             Navigator.pop(dialogContext); // Close the dialog first
             try {
               await ref.read(reportRepositoryProvider).reportStory(reportData);
-              ScaffoldMessenger.of(outerContext).showSnackBar(
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Story reported successfully.')),
               );
             } catch (e) {

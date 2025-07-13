@@ -1,4 +1,4 @@
-import 'package:athousandwords/features/report/domain/model/report.dart';
+import 'package:athousandwords/core/appmodels/report.dart';
 import 'package:athousandwords/features/report/domain/report_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod/riverpod.dart';
