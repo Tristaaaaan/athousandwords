@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../commons/widgets/buttons/regular_button.dart';
 import '../provider/story_controller.dart';
 
 class StoryScreen extends ConsumerStatefulWidget {
@@ -72,7 +73,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                       flexibleSpace: FlexibleSpaceBar(
                         titlePadding: const EdgeInsetsDirectional.only(
                           start: 16,
-                          bottom: 16,
+                          bottom: 5,
                         ),
                         centerTitle: false,
                         title: Text(
@@ -94,29 +95,30 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                       elevation: 0,
                       title: Row(
                         children: [
-                          const Expanded(child: Divider(thickness: 1)),
-                          const SizedBox(width: 10),
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.report_outlined),
+                                icon: const Icon(
+                                  Icons.report_outlined,
+                                  size: 18,
+                                ),
                                 tooltip: "Report",
                                 onPressed: refreshStory,
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 5),
 
                               // Likes
                               Row(
                                 children: [
                                   Text(
                                     "${story!.story.likes}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(fontWeight: FontWeight.w500),
                                   ),
                                   const SizedBox(width: 4),
                                   IconButton(
                                     icon: Icon(
+                                      size: 18,
                                       story.isLiked
                                           ? Icons.favorite
                                           : Icons.favorite_outline_outlined,
@@ -139,20 +141,20 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 5),
 
                               // Bookmarks
                               Row(
                                 children: [
                                   Text(
                                     "${story.story.bookmarks}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(fontWeight: FontWeight.w500),
                                   ),
                                   const SizedBox(width: 4),
                                   IconButton(
                                     icon: Icon(
+                                      size: 18,
                                       story.isBookmarked
                                           ? Icons.bookmark
                                           : Icons.bookmark_outline_outlined,
@@ -178,6 +180,29 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                                 ],
                               ),
                             ],
+                          ),
+                          const SizedBox(width: 10),
+                          const Expanded(child: Divider(thickness: 1)),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                            width: 90,
+                            child: RegularButton(
+                              onTap: () async {
+                                await ref
+                                    .read(
+                                      storyContentControllerProvider.notifier,
+                                    )
+                                    .loadNextStory(story.story.storyId!);
+                              },
+                              width: 80,
+                              withIcon: false,
+                              text: "Next",
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              textColor: Theme.of(context).colorScheme.surface,
+                              buttonKey: "nextButton",
+                            ),
                           ),
                         ],
                       ),

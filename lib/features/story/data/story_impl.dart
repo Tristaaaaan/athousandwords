@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:math';
 
 import 'package:athousandwords/core/appmodels/story.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +17,8 @@ class StoryRepositoryImpl extends StoryRepository {
   Future<void> createStory(StoryData storyData) async {
     try {
       final docRef = _firestore.collection("stories").doc();
-      await docRef.set(storyData.toMap());
+      final updatedStory = storyData.copyWith(storyId: docRef.id);
+      await docRef.set(updatedStory.toMap());
     } catch (e, st) {
       developer.log(
         'Error creating story',
@@ -29,10 +31,29 @@ class StoryRepositoryImpl extends StoryRepository {
   }
 
   @override
-  Future<StoryData> getStory() async {
+  Future<StoryData> getStory({String storyId = ""}) async {
     try {
       final snapshot = await _firestore.collection("stories").get();
-      return StoryData.fromJson(snapshot.docs.first.data());
+
+      final allDocs = snapshot.docs;
+
+      // Handle no stories case
+      if (allDocs.isEmpty) {
+        throw Exception("No stories found.");
+      }
+
+      // Filter out the current storyId if provided
+      final filteredDocs = storyId.isNotEmpty
+          ? allDocs.where((doc) => doc.id != storyId).toList()
+          : allDocs;
+
+      // If filtering left no documents (e.g., only one story), fallback to original list
+      final finalDocs = filteredDocs.isNotEmpty ? filteredDocs : allDocs;
+
+      // Get a random document
+      final randomDoc = finalDocs[Random().nextInt(finalDocs.length)];
+
+      return StoryData.fromJson(randomDoc.data());
     } catch (e, st) {
       developer.log(
         'Error getting story',

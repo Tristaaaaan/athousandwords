@@ -7,7 +7,7 @@ class StoryContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 50, bottom: 100),
+      margin: const EdgeInsets.only(top: 25, bottom: 100),
       padding: const EdgeInsets.only(left: 16, right: 16),
       child: Text(
         content,
