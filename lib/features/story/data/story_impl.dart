@@ -16,7 +16,8 @@ class StoryRepositoryImpl extends StoryRepository {
   Future<void> createStory(StoryData storyData) async {
     try {
       final docRef = _firestore.collection("stories").doc();
-      await docRef.set(storyData.toMap());
+      final updatedStory = storyData.copyWith(storyId: docRef.id);
+      await docRef.set(updatedStory.toMap());
     } catch (e, st) {
       developer.log(
         'Error creating story',
