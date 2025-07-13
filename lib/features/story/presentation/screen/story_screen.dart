@@ -1,9 +1,12 @@
+import 'package:athousandwords/features/report/domain/model/report.dart';
 import 'package:athousandwords/features/story/presentation/widgets/story_content.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../commons/widgets/buttons/regular_button.dart';
+import '../../../report/presentation/widgets/report_dialog.dart';
 import '../provider/story_controller.dart';
 
 class StoryScreen extends ConsumerStatefulWidget {
@@ -98,12 +101,22 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(
-                                  Icons.report_outlined,
-                                  size: 18,
-                                ),
+                                icon: Icon(Icons.report_outlined, size: 18),
                                 tooltip: "Report",
-                                onPressed: refreshStory,
+                                onPressed: () {
+                                  final ReportData reportData = ReportData(
+                                    storyId: story!.story.storyId!,
+                                    userId: auth.currentUser!.uid,
+                                    reportedAt: Timestamp.fromDate(
+                                      DateTime.now(),
+                                    ),
+                                  );
+                                  showReportDialog(
+                                    context: context,
+                                    reportData: reportData,
+                                    ref: ref,
+                                  );
+                                },
                               ),
                               const SizedBox(width: 5),
 
