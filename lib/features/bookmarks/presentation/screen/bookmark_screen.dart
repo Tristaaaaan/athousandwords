@@ -1,12 +1,10 @@
-import 'package:athousandwords/commons/widgets/snackbar/information_snackbar.dart';
 import 'package:athousandwords/features/bookmarks/presentation/providers/story_providers.dart';
+import 'package:athousandwords/features/bookmarks/presentation/widgets/remove_bookmark_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-import '../../../story/presentation/provider/story_controller.dart';
 
 class BookmarkScreen extends ConsumerWidget {
   const BookmarkScreen({super.key});
@@ -34,22 +32,16 @@ class BookmarkScreen extends ConsumerWidget {
                     final bookmark = bookmarkWithStory.bookmark;
 
                     return InkWell(
+                      borderRadius: BorderRadius.circular(0),
                       onTap: () async {
-                        await ref
-                            .read(storyContentControllerProvider.notifier)
-                            .toggleBookmark(
-                              story.storyId!,
-                              auth.currentUser!.uid,
-                            );
-                        if (context.mounted) {
-                          informationSnackBar(
-                            context,
-                            Icons.info,
-                            "Bookmark removed",
-                          );
-                        }
+                        showRemoveBookmarkDialog(
+                          context: context,
+                          storyId: story.storyId!,
+                          userId: auth.currentUser!.uid,
+                          ref: ref,
+                        );
                       },
-                      borderRadius: BorderRadius.circular(16),
+
                       splashColor: Theme.of(
                         context,
                       ).primaryColor.withValues(alpha: .1),
