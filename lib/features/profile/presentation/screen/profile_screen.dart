@@ -1,12 +1,17 @@
 import 'package:athousandwords/features/authentication/auth_services.dart';
+import 'package:athousandwords/features/profile/presentation/providers/edit_user_story.dart';
 import 'package:athousandwords/features/story/presentation/widgets/story_content.dart';
 import 'package:athousandwords/features/story/presentation/widgets/story_title.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../commons/widgets/textfields/regular_textfield.dart';
+import '../../../../core/appmodels/story.dart';
+import '../../../story/presentation/provider/story_controller.dart';
 import '../providers/profile_controller.dart';
 
 String getHighResPhotoUrl(String? photoUrl) {
@@ -24,11 +29,12 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final AuthServices authServices = AuthServices();
   final FirebaseAuth auth = FirebaseAuth.instance;
-
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final profileData = ref.watch(profileControllerProvider);
-
+    final isEdit = ref.watch(editUserStoryProvider);
     return SafeArea(
       child: Scaffold(
         body: CustomScrollView(
@@ -171,13 +177,114 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SliverList(
                   delegate: SliverChildListDelegate([
-                    StoryTitle(title: profileData.story?.title ?? 'No Title'),
-                    Divider(thickness: 1, indent: 16, endIndent: 16),
-                    StoryContent(
-                      content:
-                          profileData.story?.content ??
-                          'Currently no story added',
+                    // Edit / Save Toggle Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Tooltip(
+                          message: isEdit
+                              ? 'Save your story'
+                              : 'Edit your story',
+                          child: IconButton(
+                            icon: Icon(isEdit ? Icons.check : Icons.edit),
+                            onPressed: () async {
+                              final isCurrentlyEditing = ref.read(
+                                editUserStoryProvider,
+                              );
+
+                              if (!isCurrentlyEditing) {
+                                // 🔁 ENTERING edit mode — populate fields
+                                titleController.text =
+                                    profileData.story?.title ?? '';
+                                contentController.text =
+                                    profileData.story?.content ?? '';
+                              } else {
+                                // ✅ LEAVING edit mode — save updated story
+                                final hasChanged =
+                                    titleController.text.trim() !=
+                                        profileData.story?.title.trim() ||
+                                    contentController.text.trim() !=
+                                        profileData.story?.content.trim();
+
+                                if (hasChanged) {
+                                  await ref
+                                      .read(
+                                        storyContentControllerProvider.notifier,
+                                      )
+                                      .editStory(
+                                        StoryData(
+                                          title: titleController.text,
+                                          content: contentController.text,
+                                          userId: profileData.story!.userId,
+                                          createdAt:
+                                              profileData.story!.createdAt,
+                                          updatedAt: Timestamp.fromDate(
+                                            DateTime.now(),
+                                          ),
+                                          storyId: profileData.story?.storyId,
+                                        ),
+                                      );
+
+                                  await ref
+                                      .read(profileControllerProvider.notifier)
+                                      .refreshDashboard();
+                                } else {
+                                  debugPrint(
+                                    'No changes made — skipping update',
+                                  );
+                                  // Optionally show a SnackBar or Toast
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('No changes to save'),
+                                    ),
+                                  );
+                                }
+                              }
+
+                              // 🔁 Toggle edit mode
+                              ref
+                                  .read(editUserStoryProvider.notifier)
+                                  .update((state) => !state);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
+
+                    // Title Field or Display
+                    if (isEdit)
+                      StoryTextField(
+                        controller: titleController,
+                        hintText: 'Title',
+                        fontSize: 40,
+                        minWords: 1,
+                        maxWords: 8,
+                        onChanged: (_) => setState(() {}),
+                      )
+                    else
+                      StoryTitle(title: profileData.story?.title ?? 'No Title'),
+
+                    const SizedBox(height: 16),
+                    Divider(thickness: 1, indent: 16, endIndent: 16),
+                    const SizedBox(height: 16),
+                    // Content Field or Display
+                    if (isEdit)
+                      StoryTextField(
+                        controller: contentController,
+                        hintText: 'Tell your story...',
+                        fontSize: 18,
+                        minWords: 1000,
+                        maxWords: 1500,
+                        onChanged: (_) => setState(() {}),
+                      )
+                    else
+                      StoryContent(
+                        content:
+                            profileData.story?.content ??
+                            'Currently no story added',
+                      ),
+
+                    const SizedBox(height: 24),
                   ]),
                 ),
               ],

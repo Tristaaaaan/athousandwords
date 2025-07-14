@@ -9,6 +9,7 @@ abstract class StoryRepository {
   Future<void> addLike(String storyId, String userId);
   Future<void> removeLike(String storyId, String userId);
   Future<bool> isLiked(String storyId, String userId);
+  Future<void> editStory(StoryData storyData);
 }
 
 class StoryInfo {

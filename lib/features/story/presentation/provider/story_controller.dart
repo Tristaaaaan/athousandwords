@@ -3,6 +3,7 @@ import 'package:athousandwords/features/story/presentation/provider/story_state.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/appmodels/story.dart';
 import '../../data/story_impl.dart';
 
 final storyContentControllerProvider =
@@ -110,6 +111,10 @@ class StoryController extends StateNotifier<StoryState> {
     } catch (e) {
       state = StoryState.error(e.toString());
     }
+  }
+
+  Future<void> editStory(StoryData storyData) async {
+    await _storyRepository.editStory(storyData);
   }
 
   Future<void> loadNextStory(String previousStoryId) async {
