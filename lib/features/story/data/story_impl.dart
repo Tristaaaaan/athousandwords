@@ -164,6 +164,22 @@ class StoryRepositoryImpl extends StoryRepository {
     final userLikeSnap = await userLikeRef.get();
     return userLikeSnap.exists;
   }
+
+  @override
+  Future<void> editStory(StoryData storyData) async {
+    try {
+      final docRef = _firestore.collection("stories").doc(storyData.storyId);
+      await docRef.update(storyData.toMap());
+    } catch (e, st) {
+      developer.log(
+        'Error editing story',
+        name: 'StoryRepositoryImpl',
+        error: e,
+        stackTrace: st,
+      );
+      rethrow;
+    }
+  }
 }
 
 final storyRepositoryProvider = Provider<StoryRepository>((ref) {
