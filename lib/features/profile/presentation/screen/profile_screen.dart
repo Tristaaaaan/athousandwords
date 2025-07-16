@@ -207,32 +207,47 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         profileData.story?.content.trim();
 
                                 if (hasChanged) {
-                                  await ref
-                                      .read(
-                                        storyContentControllerProvider.notifier,
-                                      )
-                                      .editStory(
-                                        StoryData(
-                                          title: titleController.text,
-                                          content: contentController.text,
-                                          userId: profileData.story!.userId,
-                                          createdAt:
-                                              profileData.story!.createdAt,
-                                          updatedAt: Timestamp.fromDate(
-                                            DateTime.now(),
-                                          ),
-                                          storyId: profileData.story?.storyId,
-                                        ),
-                                      );
+                                  final title = titleController.text.trim();
+                                  final content = contentController.text.trim();
 
-                                  await ref
-                                      .read(profileControllerProvider.notifier)
-                                      .refreshDashboard();
+                                  if (title.isEmpty || content.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Title and content cannot be empty',
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    await ref
+                                        .read(
+                                          storyContentControllerProvider
+                                              .notifier,
+                                        )
+                                        .editStory(
+                                          StoryData(
+                                            title: title,
+                                            content: content,
+                                            userId: profileData.story!.userId,
+                                            createdAt:
+                                                profileData.story!.createdAt,
+                                            updatedAt: Timestamp.fromDate(
+                                              DateTime.now(),
+                                            ),
+                                            storyId: profileData.story?.storyId,
+                                          ),
+                                        );
+
+                                    await ref
+                                        .read(
+                                          profileControllerProvider.notifier,
+                                        )
+                                        .refreshDashboard();
+                                  }
                                 } else {
                                   debugPrint(
                                     'No changes made — skipping update',
                                   );
-                                  // Optionally show a SnackBar or Toast
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('No changes to save'),
