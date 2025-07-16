@@ -32,7 +32,7 @@ class _NavigationGateState extends State<NavigationGate> {
   List<Widget> get _screens => [
     const HomeScreen(),
     StoryScreen(onScrollDirectionChanged: _handleScrollDirection),
-    const BookmarkScreen(),
+    BookmarkScreen(onReadStoryTap: () => _onTabSelected(1)),
     const ProfileScreen(),
   ];
 

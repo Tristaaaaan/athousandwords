@@ -6,4 +6,8 @@ class AppText {
   static const price = "Price";
 
   static const datePref = "Date and Preferences";
+  static const whoops = "Whoops!";
+
+  static const noData =
+      "No saved stories at the moment. Explore stories that might inspire your day.";
 }
