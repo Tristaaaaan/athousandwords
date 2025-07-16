@@ -43,7 +43,7 @@ class RegularButton extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         border: withBorder!
             ? Border.all(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.inversePrimary,
                 width: 1,
               )
             : null,

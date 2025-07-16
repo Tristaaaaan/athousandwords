@@ -6,4 +6,6 @@ class AppImages {
   static const mapMarker = "${basePath}marker_svgrepo.com.png";
 
   static const noData = "${basePath}undraw_learning_qt7d.svg";
+
+  static const appLogo = "${basePath}athousandwords.png";
 }
