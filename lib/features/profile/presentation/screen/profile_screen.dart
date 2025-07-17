@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:athousandwords/features/authentication/auth_services.dart';
 import 'package:athousandwords/features/profile/presentation/providers/edit_user_story.dart';
 import 'package:athousandwords/features/story/presentation/widgets/story_content.dart';
@@ -9,9 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../commons/widgets/container/profile_settings_container.dart';
 import '../../../../commons/widgets/textfields/regular_textfield.dart';
 import '../../../../core/appmodels/story.dart';
+import '../../../../core/apptext/app_text.dart';
 import '../../../story/presentation/provider/story_controller.dart';
+import '../providers/appearance_provider.dart';
 import '../providers/profile_controller.dart';
 
 String getHighResPhotoUrl(String? photoUrl) {
@@ -199,7 +204,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 contentController.text =
                                     profileData.story?.content ?? '';
                               } else {
-                                // ✅ LEAVING edit mode — save updated story
                                 final hasChanged =
                                     titleController.text.trim() !=
                                         profileData.story?.title.trim() ||
@@ -264,6 +268,46 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                         ),
                       ],
+                    ),
+
+                    if (Platform.isAndroid)
+                      ProfileSettingsContainer(
+                        title: AppText.termsAndCondition,
+                        icon: Icons.link,
+                        onTap: () async {
+                          // var url =
+                          //     "https://app.termly.io/policy-viewer/policy.html?policyUUID=3d27fd2a-f9b7-4afa-91d3-8a38a876d554";
+                          // await LinkHelper.openUrl(Uri.parse(url));
+                        },
+                      ),
+                    ProfileSettingsContainer(
+                      containerKey: "appearanceKey",
+                      withSwitch: true,
+                      title: AppText.appearance,
+                      icon: Icons.color_lens,
+                      ref: ref,
+                      notification: ref.watch(appearanceProvider),
+                    ),
+                    ProfileSettingsContainer(
+                      title: AppText.termsofUse,
+                      icon: Icons.link,
+                      onTap: () async {
+                        // var url =
+                        //     "https://app.termly.io/policy-viewer/policy.html?policyUUID=621a8f65-efcb-477e-95da-137a9f4d83d7";
+
+                        // await LinkHelper.openUrl(Uri.parse(url));
+                      },
+                    ),
+                    ProfileSettingsContainer(
+                      title: AppText.appVersion,
+                      icon: Icons.info_outline,
+                      onTap: () async {},
+                    ),
+
+                    ProfileSettingsContainer(
+                      title: AppText.logout,
+                      icon: Icons.logout_outlined,
+                      onTap: () async {},
                     ),
 
                     // Title Field or Display
