@@ -299,11 +299,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       },
                     ),
                     ProfileSettingsContainer(
+                      title: AppText.contactUs,
+                      icon: Icons.color_lens,
+                      ref: ref,
+                      onTap: () {},
+                    ),
+                    ProfileSettingsContainer(
                       title: AppText.appVersion,
                       icon: Icons.info_outline,
                       onTap: () async {},
                     ),
-
+                    ProfileSettingsContainer(
+                      title: AppText.aboutUs,
+                      icon: Icons.info_outline,
+                      onTap: () async {},
+                    ),
                     ProfileSettingsContainer(
                       title: AppText.logout,
                       icon: Icons.logout_outlined,

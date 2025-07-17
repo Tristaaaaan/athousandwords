@@ -22,4 +22,8 @@ class AppText {
   static const termsofUse = "Terms of Use";
 
   static const appearance = "Appearance";
+
+  static const contactUs = "Contact Us";
+
+  static const aboutUs = "About Us";
 }
