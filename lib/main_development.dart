@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'config/app_config.dart';
 import 'config/app_environments.dart';
@@ -17,7 +18,17 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const ProviderScope(child: MainApp()));
+  final prefs = await SharedPreferences.getInstance();
+  final savedTheme = prefs.getBool('theme') ?? true;
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        themeNotifierProvider.overrideWith((ref) => ThemeNotifier(savedTheme)),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends ConsumerWidget {
@@ -25,13 +36,14 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = ref.watch(themeNotifierProvider.notifier).currentTheme;
+    final isDarkMode = ref.watch(themeNotifierProvider);
+    final theme = isDarkMode ? ThemeNotifier.darkMode : ThemeNotifier.lightMode;
 
     return MaterialApp.router(
       theme: theme,
 
       routerConfig: appRouter,
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: true,
     );
   }
 }
